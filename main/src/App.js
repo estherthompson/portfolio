@@ -7,6 +7,8 @@ import Home from './components/Home';
 import About from './components/About';
 import Portfolio from './components/PortfolioPage';
 import Contact from './components/Contact';
+import FilmProjects from './components/FilmProjects';
+import CodingProjects from './components/CodingProjects';
 
 function BodyClassController() {
   const location = useLocation();
@@ -36,6 +38,8 @@ function App() {
           <Route path="portfolio" element={<Portfolio />} />
           <Route path="contact" element={<Contact />} />
         </Route>
+        <Route path="film-projects" element={<FilmProjects />} />
+        <Route path="coding-projects" element={<CodingProjects />} />
       </Routes>
     </Router>
   );
