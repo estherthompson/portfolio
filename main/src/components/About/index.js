@@ -21,10 +21,7 @@ const About = () => {
             <div className="about-card-content">
               <h1 className="about-header">Hi there!</h1>
               <div className="about-text-box">
-                <p>
-                  My name is <b>Esther Thompson</b>. I'm a Computer Science and Film Studies student at the University of Calgary, where I've been studying since 2022. I began my journey in technology with a focus on software development and have since developed a passion for creating impactful projects. I enjoy solving complex problems and building innovative solutions.<br/>
-                  I hope to connect with you and continue the mission of using technology to celebrate the human experience.
-                </p>
+              <p> My name is <b>Esther Thompson</b>. I'm a Computer Science and Film Studies student at the University of Calgary, where I've been studying since 2022. My journey in technology began with software development, and I’ve since grown a strong interest in human-computer interaction, computer graphics, and cybersecurity. I’m passionate about creating impactful projects, solving complex problems, and building innovative solutions that celebrate the human experience.<br/> I look forward to connecting and collaborating with others to harness technology for meaningful impact. </p>
               </div>
             </div>
             <img src={ProfileImg} alt="Esther Thompson" className="about-profile-img-rect" />

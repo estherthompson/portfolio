@@ -1,0 +1,25 @@
+.about-text-box {
+  background: rgba(163, 133, 84, 0.7); // slightly darker, semi-transparent
+  border-radius: 18px;
+  padding: 24px 28px;
+  color: #fff;
+  font-size: 2.5rem;
+  font-family: 'BarlowSemiCondensed-Regular', sans-serif;
+  line-height: 1.5;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+}
+
+@media (max-width: 900px) {
+  .about-text-box {
+    font-size: 1.7rem;
+    padding: 16px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-text-box {
+    font-size: 1.3rem;
+    padding: 10px 4px;
+    border-radius: 10px;
+  }
+} 
