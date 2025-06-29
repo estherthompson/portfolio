@@ -1,0 +1,66 @@
+$primary-color: #ffd700;
+
+@import 'animate.css';
+
+@font-face{
+  font-family: 'BarlowSemiCondensed-Regular';
+  src: url('../assets/fonts/BarlowSemiCondensed-Regular.ttf') format('truetype');
+}
+
+@font-face{
+  font-family: 'LaBelleAurore-Regular';
+  src: url('../assets/fonts/LaBelleAurore-Regular.ttf') format('truetype');
+}
+
+@font-face{
+  font-family: 'PlaywritePT-Regular';
+  src: url('../assets/fonts/PlaywritePT-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'BarlowSemiCondensed-Bold';
+  src: url('../assets/fonts/BarlowSemiCondensed-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'BarlowSemiCondensed-Light';
+  src: url('../assets/fonts/BarlowSemiCondensed-Light.ttf') format ('truetype');
+}
+
+@font-face {
+  font-family: 'BarlowSemiCondensed-ExtraLight';
+  src: url('../assets/fonts/BarlowSemiCondensed-ExtraLight.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'BarlowSemiCondensed-Thin';
+  src: url('../assets/fonts/BarlowSemiCondensed-Thin.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Migra-Extrabold' ;
+  src: url('../assets/fonts/Migra-Extrabold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Migra-Extralight' ;
+  src: url('../assets/fonts/Migra-Extralight.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MigraItalic-Extrabold' ;
+  src: url('../assets/fonts/MigraItalic-ExtraboldItalic.ttf') format('truetype');
+}
+
+
+@font-face {
+  font-family: 'MigraItalic-Extralight' ;
+  src: url('../assets/fonts/MigraItalic-ExtralightItalic.ttf') format('truetype');
+}
+
+
+
+input,
+textarea {
+  font-family: 'BarlowSemiCondensed-Regular';
+}

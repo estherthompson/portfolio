@@ -1,0 +1,32 @@
+html {
+  font-size: 62.5%;
+}
+
+
+body {
+  margin: 0;
+  font-family: 300 11px/1.4 'BarlowSemiCondensed-Regular',  'sans-serif';
+  color: #444;
+  background: #f1e7d7;
+  display: block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.home-bg {
+  background: #f1e7d7;
+}
+body.about-bg {
+  background: #a38554;
+}
+body.portfolio-bg {
+  background: #e3d3b3;
+}
+body.contact-bg {
+  background: #f8f5ef;
+}
+
+img {
+  border-color: #f8f5ef;
+}
+

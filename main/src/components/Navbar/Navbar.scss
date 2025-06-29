@@ -1,0 +1,95 @@
+.navbar-outer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 60px;
+  background: #fff8e1;
+  z-index: 999;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.13);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar {
+  position: relative;
+  max-width: 700px;
+  width: 90%;
+  height: 60px;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  animation: navbar-fade-in 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes navbar-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.navbar-list {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  justify-content: center;
+}
+
+.navbar-list li {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-list a {
+  text-decoration: none;
+  color: #a38554;
+  font-family: 'BarlowSemiCondensed-Regular', sans-serif;
+  font-size: 1.5rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.navbar-list a.active,
+.navbar-list a:hover {
+  background: #a38554;
+  color: #fff8e1;
+}
+
+@media (max-width: 700px) {
+  .navbar-outer {
+    height: 48px;
+  }
+  .navbar {
+    max-width: 98vw;
+    width: 98vw;
+    border-radius: 1.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar-outer {
+    height: 44px;
+  }
+  .navbar {
+    height: 44px;
+    border-radius: 1rem;
+  }
+  .navbar-list {
+    gap: 1rem;
+  }
+  .navbar-list a {
+    font-size: 1.2rem;
+    padding: 0.3rem 0.7rem;
+  }
+} 

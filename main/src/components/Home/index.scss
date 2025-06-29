@@ -1,0 +1,219 @@
+@keyframes typewriter {
+  from {
+    max-width: 0;
+  }
+  to {
+    max-width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+
+@keyframes removeCursor {
+  to {
+    border-color: transparent;
+  }
+}
+
+@keyframes cursorAppear {
+  to {
+    border-right: 10px solid #91713c;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.home-page {
+  overflow: hidden;
+  min-height: 3vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5vh 5vw;
+  width: 100%;
+}
+
+.text-zone {
+  position: fixed;
+  top: 20vh;
+  left: 17vw;
+  width: clamp(150px, 25vw, 400px);
+  aspect-ratio: 3/4;
+  margin: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.text-zone h1,
+.text-zone h2,
+.text-zone h3, 
+.text-zone h4 {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid transparent;
+  display: block;
+  max-width: 0;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  opacity: 1;
+  position: relative;
+  left: 0;
+  width: 100%;
+}
+
+.text-zone h1 {
+  color: #795f35;
+  font-family: 'Migra-Extralight', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 4rem);
+  animation: typewriter 1s steps(50, end) 2s forwards,
+             cursorAppear 0.1s 2s forwards,
+             blink 0.5s step-end infinite alternate 2s,
+             removeCursor 0.1s 3s forwards;
+}
+
+.text-zone h2 {
+  color: #795f35;
+  font-family: 'Migra-Extralight', sans-serif;
+  font-size: clamp(1.2rem, 2.5vw, 3rem);
+  animation: typewriter 1.5s steps(50, end) 3.5s forwards,
+             cursorAppear 0.1s 3.5s forwards,
+             blink 0.5s step-end infinite alternate 3.5s,
+             removeCursor 0.1s 5s forwards;
+}
+
+.text-zone h3 {
+  color: #795f35;
+  font-family: 'Migra-Extralight', sans-serif;
+  font-size: clamp(1rem, 2vw, 2.5rem);
+  animation: typewriter 2s steps(50, end) 5.5s forwards,
+             cursorAppear 0.1s 5.5s forwards,
+             blink 0.5s step-end infinite alternate 5.5s,
+             removeCursor 0.1s 7.5s forwards;
+  text-align: center;
+}
+
+.text-zone h4 {
+  color: #795f35;
+  font-family: 'Migra-Extralight', sans-serif;
+  font-size: clamp(1rem, 2vw, 2.5rem);
+  animation: typewriter 2.5s steps(50, end) 8s forwards,
+             cursorAppear 0.1s 8s forwards,
+             blink 0.5s step-end infinite alternate 8s;
+  text-align: center;
+}
+
+.background-zone {
+  position: fixed;
+  top: 20vh;
+  left: 15vw;
+  width: clamp(150px, 25vw, 400px);
+  aspect-ratio: 3/4;
+  margin: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+}
+
+.background-zone img {
+  display: block;
+  width: 120%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10%;
+  border: solid 5px #f8f5ef;
+  background-color: #f8f5ef;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease;
+  pointer-events: none;
+}
+
+.image-container {
+  position: fixed;
+  top: 20vh;
+  left: 55vw;
+  width: clamp(150px, 25vw, 400px);
+  aspect-ratio: 3/4;
+  margin: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+}
+
+.image-container img {
+  display: block;
+  width: 120%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10%;
+  border: solid 5px #f8f5ef;
+  background-color: #f8f5ef;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease;
+  pointer-events: none;
+}
+
+.star-container {
+  position: fixed;
+  top: 2vh;
+  left: 2vw;
+  width: clamp(250px, 35vw, 700px);
+  aspect-ratio: 1/1;
+  z-index: 20;
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+}
+
+.star-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+  transition: transform 0.3s ease;
+}
+
+.image-9-container {
+  position: fixed;
+  top: -12vh;
+  right: 5vw;
+  width: clamp(200px, 25vw, 500px);
+  aspect-ratio: 1/1;
+  z-index: 20;
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+  transform: rotate(25deg);
+}
+
+.image-9-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+  transition: transform 0.3s ease;
+}
+
+
+
