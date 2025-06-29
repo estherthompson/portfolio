@@ -10,12 +10,6 @@ const SERVICE_ID = 'service_0lpg5co';
 const TEMPLATE_ID = 'template_gja4k87';
 const PUBLIC_KEY = 'G_XboOljkeTkIZSl5';
 
-const linkedinIcon = (
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="contact-icon-svg">
-    <rect width="32" height="32" rx="8" fill="#0A66C2"/>
-    <path d="M10.6667 13.3333H13.3333V22.6667H10.6667V13.3333ZM12 10.6667C12.7364 10.6667 13.3333 11.2636 13.3333 12C13.3333 12.7364 12.7364 13.3333 12 13.3333C11.2636 13.3333 10.6667 12.7364 10.6667 12C10.6667 11.2636 11.2636 10.6667 12 10.6667ZM15.3333 13.3333H18V14.6667H18.04C18.4267 13.96 19.24 13.2533 20.3333 13.2533C22.3333 13.2533 22.6667 14.52 22.6667 16.08V22.6667H20V16.6667C20 15.8133 20 14.6667 18.6667 14.6667C17.3333 14.6667 17.3333 15.8133 17.3333 16.6667V22.6667H15.3333V13.3333Z" fill="white"/>
-  </svg>
-);
 
 const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', message: '' });

@@ -42,12 +42,12 @@ const PhotoCarousel = () => {
         </div>
         <div className="slider-nav">
           {images.map((_, idx) => (
-            <a
-              key={idx}
-              href="#"
-              onClick={e => { e.preventDefault(); handleNavClick(idx); }}
-              style={{ opacity: current === idx ? 1 : 0.75 }}
-            />
+            <button
+            key={idx}
+            onClick={() => handleNavClick(idx)}
+            style={{ opacity: current === idx ? 1 : 0.75 }}
+            aria-label={`Go to slide ${idx + 1}`}
+            ></button>
           ))}
         </div>
       </div>

@@ -56,11 +56,12 @@
   z-index: 1;
 }
 
-.slider-nav a {
+.slider-nav button {
   width: 0.5rem;
-  height: 0.5rem;
+  height: 1.0rem;
   border-radius: 50%;
-  background-color: #0c0c0c;
+  background-color: #8d8171;
+  border-color: #b8a068;
   opacity: 0.75;
   transition: opacity ease 250ms;
   display: block;
