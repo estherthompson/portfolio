@@ -12,7 +12,6 @@ import {
 import './index.scss';
 
 // Import music files
-import Laufey from '../../assets/music/Laufey.mp3';
 import FixYou from '../../assets/music/Fix_You.mp3';
 import FastCar from '../../assets/music/Fast_Car.mp3';
 import ASkyFullOfStars from '../../assets/music/A_Sky_Full_of_Stars.mp3';
@@ -34,11 +33,6 @@ const MusicNav = ({ colorScheme = 'brown' }) => {
     
     // Real songs with your music files
     const songs = [
-        { 
-            title: "Laufey", 
-            artist: "Laufey", 
-            url: Laufey 
-        },
         { 
             title: "Fix You", 
             artist: "Coldplay", 
