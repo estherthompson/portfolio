@@ -19,9 +19,11 @@
 
 .slider {
   display: flex;
-  width: 400px;
+  width: 100%;
+  max-width: 90vw;
   height: 450px;
   max-width: 100%;
+  aspect-ratio: 4/5;
   background:  #080807;
   aspect-ratio: unset;
   overflow-x: auto;
@@ -89,6 +91,7 @@
   align-items: center;
   justify-content: center;
   transition: background 0.2s, color 0.2s, transform 0.15s;
+  margin: 0 -10px;
 }
 
 .carousel-arrow:hover {
@@ -107,7 +110,9 @@
 
 @media (max-width: 900px) {
   .slider {
-    height: 260px;
+    height: 38vw;
+    min-height: 180px;
+    max-height: 320px;
   }
   .carousel-arrow {
     width: 2.1rem;
@@ -124,7 +129,9 @@
 
 @media (max-width: 600px) {
   .slider {
-    height: 180px;
+    height: 48vw;
+    min-height: 120px;
+    max-height: 200px;
   }
   .carousel-arrow {
     display: none;

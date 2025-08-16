@@ -22,7 +22,7 @@ const projects = [
   {
     title: 'Auditioning for Love',
     image: AuditioningForLove,
-    description: 'Coming soon: A new film about the search for love and self-acceptance.'
+    description: 'Coming soon'
   },
 ];
 
