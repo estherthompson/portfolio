@@ -11,6 +11,7 @@ const projects = [
     image: require('../../assets/images/coding.png'),
     tech: ["Next Js", "Typescript", "CSS", "Color Analysis API", "Python"],
     github: "https://github.com/estherthompson/palette-genie",
+    date: "August 2025 - Present",
     detailedInfo: {
       challenge: "Artists often struggle to recreate colors from reference images using their limited paint collection.",
       solution: "Built an AI-powered tool that analyzes reference images and calculates exact paint mixing ratios from user's available colors.",
@@ -33,8 +34,10 @@ const projects = [
     github: "https://github.com/estherthompson/whisky-baking",
     report: "https://docs.google.com/document/d/1Qk4v0brwPbv-9wc2BINeyDuTyv64onhFyQgjI2X8itc/edit?usp=sharing",
     presentation: "https://docs.google.com/presentation/d/1rKOZ04CXleA2DcMK79Yvk36vzd8NrgIjXFZMDUAfiGo/edit?usp=sharing",
+    date: "March 2025 - April 2025",
+    isGroupProject: true,
     detailedInfo: {
-      challenge: "It can be difficult to find recipes that accommodate dietary restrictions, such as allergies, while also using ingredients already available at home. Many recipe websites are cluttered with lengthy blogs and irrelevant content, making it frustrating to find actual recipes. The lack of robust filtering options further complicates meal planning.",
+      challenge: "It can be difficult to find recipes that accommodate dietary restrictions, such as allergies, while also using ingredients already available at home. Many recipe websites are cluttered with lengthy blogs and irrelevant content, making it frustrating to find actual recipes. The lack of robust filtering options further complicates meal planning. Me alongside a group of friends, wanted to create a website that tackles this issue.",
       motivation: "Baking should be an enjoyable and stress-free experience, but many recipe websites overwhelm users with unnecessary blog content and lack effective filtering options. Our goal is to simplify baking by offering clear, hassle-free recipes, smart ingredient substitutions, and essential tool recommendations—so users can focus on baking, not searching.",
       solution: "We're building a website that simplifies the baking process while being dietary restriction-friendly. It offers clear, easy-to-follow recipes with ingredient substitutions to accommodate allergies and dietary preferences. The website also recommends essential kitchen tools and suggests baked goods based on the ingredients users already have at home, making cooking more accessible and enjoyable for everyone.",
       features: [
@@ -45,26 +48,50 @@ const projects = [
         "Clean, blog-free recipe presentation",
         "Advanced filtering by allergies and preferences"
       ],
-      learnings: "Mastered responsive grid layouts, complex filtering algorithms, and real-time database operations with Supabase. Gained experience in user-centered design and creating intuitive recipe discovery systems."
+      learnings: "I really got to dive deep into responsive design and grid layouts, which was super valuable. The filtering system was quite challenging to build, but I learned a lot about creating algorithms that can handle multiple dietary restrictions and ingredient combinations. Working with Supabase was a game-changer - I got really comfortable with real-time database operations and understanding how to structure data relationships. On the backend side, I built my first Node.js APIs to connect with Supabase, which taught me a ton about RESTful design and CRUD operations. I also gained a much better understanding of database management - things like data modeling, query optimization, and how to think about performance when dealing with recipe searches and user preferences."
     }
   },
   {
     title: "Portfolio Website",
-    description: "A modern, responsive portfolio website showcasing my film and coding projects. Features interactive animations, smooth transitions, and a unique tech stack visualizer with animated marbles.",
+    description: "A modern, responsive portfolio website showcasing my film and coding projects. Features interactive animations, smooth transitions, and a unique tech stack visualizer with animated flowers in a jar.",
     image: require('../../assets/images/Hello_World.png'),
     tech: ["React", "SCSS", "Framer Motion", "JavaScript"],
     github: "https://github.com/estherthompson/portfolio",
-    live: "https://estherthompson.github.io/portfolio",
+    live: "https://drive.google.com/file/d/1BL7dRkWZNXCgNxyikXG9B6svlWFlGqXc/view?usp=sharing",
+    date: "May 2025 - August 2025",
+    isGroupProject: false,
     detailedInfo: {
       challenge: "Creating an engaging portfolio that showcases both technical skills and creative projects in an interactive way.",
-      solution: "Built a multi-section portfolio with animated components, including a unique tech stack visualizer using physics-based animations.",
+      solution: "Built a multi-section portfolio with animated components, including a unique tech stack visualizer using animated flowers in a jar with physics-based animations.",
       features: [
-        "Interactive tech stack jar with animated marbles",
+        "Interactive tech stack jar with animated flowers",
         "Smooth page transitions and hover effects",
         "Responsive design for all devices",
         "Integrated film and coding project showcases"
       ],
-      learnings: "Advanced React animations with Framer Motion, complex SCSS styling, and creating engaging user experiences."
+      learnings: "I spent a lot of time diving deep into Framer Motion animations and really getting comfortable with complex CSS styling. The tech stack jar with animated flowers was particularly challenging - I had to figure out how to make the physics feel natural and responsive. I faced several issues with the jar component, especially when it came to nested classes and alignment - getting everything to line up properly took a lot of trial and error. I also put a lot of effort into creating smooth page transitions and hover effects that felt polished and professional. Working with SCSS was great for organizing all the different animation states and responsive breakpoints. It was really rewarding to see how all the small animation details came together to create an engaging user experience."
+    }
+  },
+  {
+    title: "Globetrekker",
+    description: "A desktop application for a travel company that assists tourists in navigating their trips in a post-COVID environment. Using principles of Task-Centered System Design (TCSD), the focus is on identifying real-world tasks tourists perform during travel, such as viewing itineraries, booking local events and accessing local amenities. By gathering and analyzing these tasks, the design crafts to the practical needs of different tourist user groups.",
+    image: require('../../assets/images/GlobeTrekker.png'), 
+    tech: ["React", "JavaScript", "CSS", "GitHub Pages"],
+    github: "https://github.com/estherthompson/globetrekker",
+    date: "October 2024 - December 2024",
+    isGroupProject: true,
+    detailedInfo: {
+      challenge: "Creating an intuitive travel planning platform that helps users discover new destinations and plan their adventures effectively in a post-COVID travel environment.",
+      solution: "Built a comprehensive desktop application using Task-Centered System Design principles to address real-world tourist needs including itinerary management, local event booking, and amenity access.",
+      features: [
+        "Task-centered design for tourist navigation",
+        "Itinerary viewing and management system",
+        "Local event booking functionality",
+        "Access to local amenities and services",
+        "User feedback-driven prototyping",
+        "Post-COVID travel considerations"
+      ],
+      learnings: "I learned so much about what it truly means to have the user at the center of your design. We spent weeks doing presentations and getting feedback about Task-Centered System Design (TSCD) methodology, which really opened my eyes to how important user research is. The process of gathering real-world tourist tasks, analyzing them, and then implementing those findings into a React frontend design was incredibly valuable. I gained deep understanding of how to translate user needs into actual interface decisions, and how iterative feedback can completely transform a design approach. It was fascinating to see how TSCD principles guided every decision we made, from the initial research phase right through to the final implementation."
     }
   }
 ];
@@ -124,7 +151,10 @@ const CodingProjects = () => {
             </div>
             <div className="coding-project-content">
               <div className="project-title-container">
-                <h2 className="coding-project-title">{project.title}</h2>
+                <div className="title-and-date">
+                  <h2 className="coding-project-title">{project.title}</h2>
+                  {project.date && <span className="project-date">{project.date}</span>}
+                </div>
                 {idx === 0 && <span className="in-progress-badge">In Progress</span>}
               </div>
               <p className="coding-project-desc">{project.description}</p>
@@ -141,6 +171,12 @@ const CodingProjects = () => {
 
               {expandedProject === idx && (
                 <div className="project-detailed-info">
+                  {project.detailedInfo.classInfo && (
+                    <div className="detail-section">
+                      <h4>Class Project</h4>
+                      <p>{project.detailedInfo.classInfo}</p>
+                    </div>
+                  )}
                   <div className="detail-section">
                     <h4>Problem Identified</h4>
                     <p>{project.detailedInfo.challenge}</p>
@@ -151,10 +187,18 @@ const CodingProjects = () => {
                       <p>{project.detailedInfo.motivation}</p>
                     </div>
                   )}
-                  <div className="detail-section">
-                    <h4>Our Solution</h4>
-                    <p>{project.detailedInfo.solution}</p>
-                  </div>
+                  {project.isGroupProject && (
+                    <div className="detail-section">
+                      <h4>Our Solution</h4>
+                      <p>{project.detailedInfo.solution}</p>
+                    </div>
+                  )}
+                  {!project.isGroupProject && (
+                    <div className="detail-section">
+                      <h4>My Solution</h4>
+                      <p>{project.detailedInfo.solution}</p>
+                    </div>
+                  )}
                   <div className="detail-section">
                     <h4>Key Features</h4>
                     <ul>
