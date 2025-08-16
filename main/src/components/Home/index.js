@@ -96,7 +96,7 @@ const Home = () => {
                         whileTap={{ scale: 0.95 }}
                         onClick={() => {
                             const link = document.createElement('a');
-                            link.href = '/resume.pdf';
+                            link.href = '/Esther_Thompson_Resume.pdf';
                             link.download = 'Esther_Thompson_Resume.pdf';
                             link.click();
                         }}
