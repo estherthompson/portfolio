@@ -38,7 +38,7 @@ const TechJar = () => {
               
               // Left-leaning flowers
               if (tech.name === 'Git'  || tech.name === 'SQL Developer') {
-                rotationAngle = -60 + (index * 5);
+                rotationAngle = -61 + (index * 5);
                 tiltAngle = -0;
               }
               // Right-leaning flowers
