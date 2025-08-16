@@ -1,0 +1,465 @@
+/* Bottom Music Navigation Bar */
+.bottom-music-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 2px solid;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.3);
+  z-index: 25;
+  font-family: 'DM Serif Text', serif;
+  padding: 0.8rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+/* Brown Color Scheme */
+.bottom-music-nav.brown {
+  background: linear-gradient(135deg, rgba(145, 113, 60, 0.95) 0%, rgba(121, 95, 53, 0.95) 100%);
+  border-top-color: #f8f5ef;
+  color: #f8f5ef;
+}
+
+/* Cream Color Scheme */
+.bottom-music-nav.cream {
+  background: linear-gradient(135deg, rgba(248, 245, 239, 0.95) 0%, rgba(240, 235, 225, 0.95) 100%);
+  border-top-color: #91713c;
+  color: #91713c;
+}
+
+.music-nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 1.5rem;
+}
+
+/* Song Info Section */
+.song-info-section {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 200px;
+}
+
+.music-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  flex-shrink: 0;
+}
+
+.bottom-music-nav.brown .music-icon {
+  color: #f8f5ef;
+}
+
+.bottom-music-nav.cream .music-icon {
+  color: #91713c;
+}
+
+.song-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.song-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bottom-music-nav.brown .song-title {
+  color: #fff;
+}
+
+.bottom-music-nav.cream .song-title {
+  color: #795f35;
+}
+
+.song-artist {
+  font-size: 0.7rem;
+  opacity: 0.9;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bottom-music-nav.brown .song-artist {
+  color: #f8f5ef;
+}
+
+.bottom-music-nav.cream .song-artist {
+  color: #91713c;
+}
+
+/* Playback Controls */
+.playback-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-shrink: 0;
+}
+
+.control-btn {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  border: 1px solid;
+}
+
+.bottom-music-nav.brown .control-btn {
+  background: rgba(248, 245, 239, 0.2);
+  border-color: rgba(248, 245, 239, 0.3);
+  color: #f8f5ef;
+}
+
+.bottom-music-nav.cream .control-btn {
+  background: rgba(145, 113, 60, 0.2);
+  border-color: rgba(145, 113, 60, 0.3);
+  color: #91713c;
+}
+
+.control-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.control-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.bottom-music-nav.brown .control-btn:hover:not(:disabled) {
+  background: rgba(248, 245, 239, 0.3);
+  border-color: rgba(248, 245, 239, 0.5);
+}
+
+.bottom-music-nav.cream .control-btn:hover:not(:disabled) {
+  background: rgba(145, 113, 60, 0.3);
+  border-color: rgba(145, 113, 60, 0.5);
+}
+
+.play-btn {
+  width: 45px;
+  height: 45px;
+}
+
+.bottom-music-nav.brown .play-btn {
+  background: rgba(248, 245, 239, 0.3);
+}
+
+.bottom-music-nav.cream .play-btn {
+  background: rgba(145, 113, 60, 0.3);
+}
+
+.play-btn svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+/* Progress Section */
+.progress-section {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1;
+  max-width: 400px;
+}
+
+.time-display {
+  font-size: 0.7rem;
+  opacity: 0.9;
+  font-family: monospace;
+  min-width: 35px;
+  text-align: center;
+}
+
+.bottom-music-nav.brown .time-display {
+  color: #f8f5ef;
+}
+
+.bottom-music-nav.cream .time-display {
+  color: #91713c;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.bottom-music-nav.brown .progress-bar {
+  background: rgba(248, 245, 239, 0.2);
+}
+
+.bottom-music-nav.cream .progress-bar {
+  background: rgba(145, 113, 60, 0.2);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.1s ease;
+}
+
+.bottom-music-nav.brown .progress-fill {
+  background: linear-gradient(90deg, #f8f5ef, #fff);
+}
+
+.bottom-music-nav.cream .progress-fill {
+  background: linear-gradient(90deg, #91713c, #795f35);
+}
+
+/* Volume Controls */
+.volume-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 120px;
+}
+
+.volume-btn {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  flex-shrink: 0;
+  border: 1px solid;
+}
+
+.bottom-music-nav.brown .volume-btn {
+  background: rgba(248, 245, 239, 0.2);
+  border-color: rgba(248, 245, 239, 0.3);
+  color: #f8f5ef;
+}
+
+.bottom-music-nav.cream .volume-btn {
+  background: rgba(145, 113, 60, 0.2);
+  border-color: rgba(145, 113, 60, 0.3);
+  color: #91713c;
+}
+
+.volume-btn svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.volume-btn:hover {
+  transform: scale(1.1);
+}
+
+.bottom-music-nav.brown .volume-btn:hover {
+  background: rgba(248, 245, 239, 0.3);
+  border-color: rgba(248, 245, 239, 0.5);
+}
+
+.bottom-music-nav.cream .volume-btn:hover {
+  background: rgba(145, 113, 60, 0.3);
+  border-color: rgba(145, 113, 60, 0.5);
+}
+
+.volume-slider {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.bottom-music-nav.brown .volume-slider {
+  background: rgba(248, 245, 239, 0.2);
+}
+
+.bottom-music-nav.cream .volume-slider {
+  background: rgba(145, 113, 60, 0.2);
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-music-nav.brown .volume-slider::-webkit-slider-thumb {
+  background: #f8f5ef;
+}
+
+.bottom-music-nav.cream .volume-slider::-webkit-slider-thumb {
+  background: #91713c;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-music-nav.brown .volume-slider::-moz-range-thumb {
+  background: #f8f5ef;
+}
+
+.bottom-music-nav.cream .volume-slider::-moz-range-thumb {
+  background: #91713c;
+}
+
+/* Mobile responsive bottom nav */
+@media (max-width: 768px) {
+  .bottom-music-nav {
+    padding: 0.6rem 1rem;
+  }
+  
+  .music-nav-content {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .song-info-section {
+    min-width: 150px;
+    order: 1;
+    flex: 1;
+  }
+  
+  .playback-controls {
+    order: 2;
+    flex-shrink: 0;
+  }
+  
+  .progress-section {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: none;
+    margin-top: 0.5rem;
+  }
+  
+  .volume-controls {
+    order: 4;
+    min-width: 100px;
+  }
+  
+  .song-title {
+    font-size: 0.8rem;
+  }
+  
+  .song-artist {
+    font-size: 0.6rem;
+  }
+  
+  .control-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .control-btn svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+  
+  .play-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .play-btn svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  
+  .time-display {
+    font-size: 0.6rem;
+    min-width: 30px;
+  }
+  
+  .volume-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .volume-btn svg {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bottom-music-nav {
+    padding: 0.5rem 0.8rem;
+  }
+  
+  .music-nav-content {
+    gap: 0.8rem;
+  }
+  
+  .song-info-section {
+    min-width: 120px;
+  }
+  
+  .song-title {
+    font-size: 0.7rem;
+  }
+  
+  .song-artist {
+    font-size: 0.5rem;
+  }
+  
+  .control-btn {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .control-btn svg {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+  
+  .play-btn {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .play-btn svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .volume-controls {
+    min-width: 80px;
+  }
+  
+  .volume-btn {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .volume-btn svg {
+    width: 0.7rem;
+    height: 0.7rem;
+  }
+} 

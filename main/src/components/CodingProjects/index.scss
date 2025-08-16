@@ -769,7 +769,7 @@
   /* Ensure the entire flower area is clickable */
   pointer-events: auto;
   /* Add a subtle border to debug hover area */
-  border: 1px solid rgba(255, 0, 0, 0.3);
+  /* border: 1px solid rgba(255, 0, 0, 0.3); */
 }
 
 .tech-flower:hover {
