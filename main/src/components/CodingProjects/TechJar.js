@@ -5,14 +5,16 @@ import { techStack } from './techStack';
 import jarImg from '../../assets/Icons/jar.png';
 
 const MARBLE_RADIUS = 22;
+const jarSize = { width: 300, height: 450 };
 
 const TechJar = () => {
   const [dropped, setDropped] = useState(false);
-  const [selected, setSelected] = useState(null); // index of selected marble
+  const [selected, setSelected] = useState(null);
+  const [hoveredMarble, setHoveredMarble] = useState(null);
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDropped(true), 300);
+    const timer = setTimeout(() => setDropped(true), 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -30,30 +32,63 @@ const TechJar = () => {
   }, [selected]);
 
   // Helper to get marble's absolute position
-  const getMarbleAbsLeft = (marble) => 20 + marble.x * jarSize.width + MARBLE_RADIUS;
-  const getMarbleAbsTop = (marble) => 0 + marble.y * jarSize.height + MARBLE_RADIUS;
+  const getMarbleAbsLeft = (marble) => (containerRef.current?.offsetWidth || 320) * 0.4 - jarSize.width / 2 + marble.x * jarSize.width + MARBLE_RADIUS;
+  const getMarbleAbsTop = (marble) => (containerRef.current?.offsetHeight || 160) * 0.65 - jarSize.height / 2 + marble.y * jarSize.height + MARBLE_RADIUS;
 
   return (
-    <div
-      className="tech-jar-container"
-      ref={containerRef}
-      style={{ position: 'relative', height: 800, width: 520, margin: '0 auto' }}
-    >
-      {/* Jar PNG image */}
-      <img
-        src={jarImg}
-        alt="Jar"
-        style={{
-          position: 'absolute',
-          left: 20,
-          top: 40,
-          zIndex: 1,
-          width: jarSize.width,
-          height: jarSize.height,
-          objectFit: 'contain',
-          pointerEvents: 'none',
-        }}
-      />
+    <div className="tech-jar-wrapper">
+      <div className="jar-title">
+        <h3>My Tech Stack</h3>
+        <p>Click the marbles to explore my skills</p>
+      </div>
+      
+      <div className="jar-content-layout">
+        <div className="tech-stats">
+          <div className="tech-stat-item">
+            <span className="tech-stat-number">9</span>
+            <span className="tech-stat-label">Technologies</span>
+          </div>
+          <div className="tech-stat-item">
+            <span className="tech-stat-number">3</span>
+            <span className="tech-stat-label">Projects</span>
+          </div>
+          <div className="tech-stat-item">
+            <span className="tech-stat-number">2+</span>
+            <span className="tech-stat-label">Years Coding</span>
+          </div>
+        </div>
+        
+        <div
+          className="tech-jar-container"
+          ref={containerRef}
+        >
+        <div className="floating-particles">
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+        </div>
+        {/* Jar PNG image with glow effect */}
+        <div className="jar-glow-container">
+          <img
+            src={jarImg}
+            alt="Tech Skills Jar"
+            className="jar-image"
+            style={{
+              position: 'absolute',
+              left: '25%',
+              top: '60%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 1,
+              width: jarSize.width,
+              height: jarSize.height,
+              objectFit: 'contain',
+              pointerEvents: 'none',
+            }}
+          />
+        </div>
       {/* Marbles falling in */}
       {techStack.map((marble, idx) => {
         const isLeft = marble.x < 0.5; // use 0.5 for proportional
@@ -67,34 +102,54 @@ const TechJar = () => {
         return (
           <motion.div
             key={marble.name}
-            className="tech-marble"
+            className={`tech-marble ${isSelected ? 'selected' : ''} ${hoveredMarble === idx ? 'hovered' : ''}`}
             style={{
               position: 'absolute',
-              left: marble.x * jarSize.width,
-              top: dropped ? marble.y * jarSize.height : -20,
-              zIndex: isSelected ? 10 : 2,
+              left: `calc(40% - ${jarSize.width / 2}px + ${marble.x * jarSize.width}px)`,
+              top: dropped ? `calc(65% - ${jarSize.height / 2}px + ${marble.y * jarSize.height}px)` : '-50px',
+              zIndex: isSelected ? 10 : hoveredMarble === idx ? 5 : 2,
               width: MARBLE_RADIUS * 2,
               height: MARBLE_RADIUS * 2,
               borderRadius: '50%',
-              background: marble.color,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              background: `linear-gradient(135deg, ${marble.color}, ${marble.color}dd)`,
+              boxShadow: isSelected 
+                ? `0 8px 25px ${marble.color}66, 0 0 20px ${marble.color}44`
+                : hoveredMarble === idx 
+                ? `0 6px 20px ${marble.color}44, 0 0 15px ${marble.color}33`
+                : '0 4px 12px rgba(0,0,0,0.2)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               userSelect: 'none',
               cursor: 'pointer',
-              border: isSelected ? '2.5px solid #222' : 'none',
-              transition: 'border 0.2s',
+              border: isSelected ? `3px solid ${marble.color}` : '2px solid rgba(255,255,255,0.3)',
+              transition: 'all 0.3s ease',
             }}
-            initial={{ top: -20 }}
-            animate={{ top: dropped ? marble.y * jarSize.height : -20 }}
+            initial={{ 
+              top: -50, 
+              rotate: Math.random() * 360,
+              scale: 0.5
+            }}
+            animate={{ 
+              top: dropped ? `calc(65% - ${jarSize.height / 2}px + ${marble.y * jarSize.height}px)` : '-50px',
+              rotate: dropped ? 0 : Math.random() * 360,
+              scale: dropped ? (isSelected ? 1.2 : hoveredMarble === idx ? 1.1 : 1) : 0.5
+            }}
             transition={{
               type: 'spring',
-              stiffness: 80,
-              damping: 12,
-              delay: 0.1 + idx * 0.08,
+              stiffness: 60,
+              damping: 15,
+              delay: 0.2 + idx * 0.1,
             }}
-            onClick={() => setSelected(idx)}
+            whileHover={{ 
+              scale: 1.15,
+              rotate: [0, -10, 10, 0],
+              transition: { duration: 0.3 }
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setSelected(selected === idx ? null : idx)}
+            onHoverStart={() => setHoveredMarble(idx)}
+            onHoverEnd={() => setHoveredMarble(null)}
           >
             <div style={{ width: 28, height: 28 }}>{marble.icon}</div>
             {/* Popup */}
@@ -123,9 +178,18 @@ const TechJar = () => {
                         y1={1}
                         x2={isLeft ? lineWidth : 0}
                         y2={1}
-                        stroke="#222"
-                        strokeWidth="2"
-                      />
+                        stroke={marble.color}
+                        strokeWidth="3"
+                        strokeDasharray="5,5"
+                        opacity="0.8"
+                      >
+                        <animate
+                          attributeName="stroke-dashoffset"
+                          values="0;10"
+                          dur="1s"
+                          repeatCount="indefinite"
+                        />
+                      </line>
                     </svg>
                   );
                 })()}
@@ -160,6 +224,8 @@ const TechJar = () => {
           </motion.div>
         );
       })}
+      </div>
+      </div>
     </div>
   );
 };
