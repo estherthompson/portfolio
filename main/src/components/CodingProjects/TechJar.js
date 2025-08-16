@@ -46,11 +46,11 @@ const TechJar = () => {
                 rotationAngle = 15 + (index * 5);
                 tiltAngle = 8;
               }
-              else if (tech.name == 'C++') {
+              else if (tech.name === 'C++') {
                 rotationAngle = 4 + (index * 5);
                 tiltAngle = 8;
               }
-              else if (tech.name == 'Arduino') {
+              else if (tech.name === 'Arduino') {
                 rotationAngle = -60 + (index * 5);
                 tiltAngle = 8;
               }
