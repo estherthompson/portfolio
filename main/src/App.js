@@ -9,6 +9,7 @@ import Portfolio from './components/PortfolioPage';
 import Contact from './components/Contact';
 import FilmProjects from './components/FilmProjects';
 import CodingProjects from './components/CodingProjects';
+import TechJarTestEnvironment from './components/CodingProjects/test/TechJarTestEnvironment';
 
 function BodyClassController() {
   const location = useLocation();
@@ -40,6 +41,7 @@ function App() {
         </Route>
         <Route path="film-projects" element={<FilmProjects />} />
         <Route path="coding-projects" element={<CodingProjects />} />
+        <Route path="tech-jar-test" element={<TechJarTestEnvironment />} />
       </Routes>
     </Router>
   );

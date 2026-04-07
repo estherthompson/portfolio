@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import starImg from '../../assets/images/14.png';
 import { techStack } from './techStack';
 
-const TechJar = () => {
+const TechJar = ({ projectCount = 4 }) => {
   const [hoveredTech, setHoveredTech] = useState(null);
 
   return (
@@ -17,7 +17,7 @@ const TechJar = () => {
               <span className="tech-stat-label">Technologies</span>
             </div>
             <div className="tech-stat-item">
-              <span className="tech-stat-number">4</span>
+              <span className="tech-stat-number">{projectCount}</span>
               <span className="tech-stat-label">Projects</span>
             </div>
             <div className="tech-stat-item">

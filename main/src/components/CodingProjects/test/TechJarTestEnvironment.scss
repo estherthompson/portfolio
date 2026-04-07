@@ -1,0 +1,91 @@
+.tech-jar-test-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(165deg, #2d2133 0%, #3a2840 42%, #4a3250 100%);
+  color: #fff5f9;
+  font-family: 'BarlowSemiCondensed', system-ui, sans-serif;
+}
+
+.tech-jar-test-header {
+  padding: 1.25rem 1.5rem 0.75rem;
+  flex-shrink: 0;
+}
+
+.tech-jar-test-back {
+  color: #ffb0d0;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.tech-jar-test-heading {
+  margin-top: 1rem;
+  max-width: 40rem;
+
+  h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.5;
+    opacity: 0.92;
+    font-size: 1rem;
+  }
+}
+
+.tech-jar-test-canvas-wrap {
+  flex: 1;
+  min-height: 420px;
+  width: 100%;
+  margin: 0.75rem 0 1rem;
+
+  canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+.tech-jar-test-hud {
+  margin: 0 1.5rem 1rem;
+  padding: 1rem 1.25rem;
+  max-width: 40rem;
+  border-radius: 1rem;
+  background: rgba(255, 222, 238, 0.12);
+  border: 1px solid rgba(255, 158, 198, 0.45);
+  box-shadow: 0 8px 32px rgba(90, 40, 80, 0.2);
+
+  strong {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: 0.35rem;
+    color: #ffc8e0;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.45;
+    opacity: 0.92;
+  }
+}
+
+.tech-jar-test-footer {
+  padding: 1rem 1.5rem 1.5rem;
+  font-size: 0.9rem;
+  opacity: 0.75;
+  max-width: 36rem;
+}
+
+@media (min-width: 768px) {
+  .tech-jar-test-canvas-wrap {
+    min-height: 560px;
+  }
+}

@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import './index.scss';
 import ItọñImg from '../../assets/images/Itọñ.png';
 import FamilarPaths from '../../assets/images/familar_paths.png'
-import AuditioningForLove from '../../assets/images/auditioning_for_love.png'
+import AuditioningForLove from '../../assets/images/auditioning_for_love.png';
+import FilmProjectPlaceholder from '../../assets/images/film.jpg';
 
 const projects = [
-  
   {
     title: 'Familiar Paths',
     image: FamilarPaths,
-    description: 'A poetic short film about the choices we make and the trails we follow. Are our paths predetermined, shaped by others—like the trails of ants—or are they truly our own? "Familiar Paths" invites you to reflect on authenticity, agency, and the journey toward self-discovery.',
-    link: 'https://drive.google.com/file/d/1KpuTtqoAhiciJKmeg2fuP5pngeumq8p4/view?usp=sharing'
+    description:
+      'A poetic short film about the choices we make and the trails we follow. Are our paths predetermined, shaped by others—like the trails of ants—or are they truly our own? "Familiar Paths" invites you to reflect on authenticity, agency, and the journey toward self-discovery. This was shot, filmed, and edited in a day.',
+    link: 'https://www.youtube.com/watch?v=-3LvJ6YL6cw',
   },
   {
     title: 'Itọñ - Film Pitch',
@@ -22,7 +23,12 @@ const projects = [
   {
     title: 'Auditioning for Love',
     image: AuditioningForLove,
-    description: 'Coming soon'
+    description: 'Coming soon',
+  },
+  {
+    title: 'What You Do next',
+    image: FilmProjectPlaceholder,
+    description: 'Coming soon.',
   },
 ];
 

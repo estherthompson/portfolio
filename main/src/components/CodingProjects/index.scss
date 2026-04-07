@@ -78,30 +78,60 @@
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
 }
 
-// Palette Genie (1st project) - Pastel Pink
+// H-O-M-E AI
 .coding-project-section:nth-child(3) {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 50%, #1a365d 100%);
+}
+
+// Node Plan
+.coding-project-section:nth-child(4) {
+  background: linear-gradient(135deg, #234e52 0%, #285e61 50%, #1c4044 100%);
+}
+
+// Blitz Construction and Delivery
+.coding-project-section:nth-child(5) {
+  background: linear-gradient(135deg, #c05621 0%, #dd6b20 50%, #9c4221 100%);
+}
+
+// MASIV Intranet – Heimdall
+.coding-project-section:nth-child(6) {
+  background: linear-gradient(135deg, #44337a 0%, #553c9a 50%, #322659 100%);
+}
+
+// Bloom AI
+.coding-project-section:nth-child(7) {
+  background: linear-gradient(135deg, #276749 0%, #2f855a 50%, #22543d 100%);
+}
+
+// GridQuest
+.coding-project-section:nth-child(8) {
+  background: linear-gradient(135deg, #702459 0%, #97266d 50%, #521b41 100%);
+}
+
+// Palette Genie - Pastel Pink
+.coding-project-section:nth-child(9) {
   background: linear-gradient(135deg, #f8d7da 0%, #f5c2c7 50%, #e8a1a8 100%);
 }
 
-// Whisky Baking (2nd project) - Keep existing brown
-.coding-project-section:nth-child(4) {
-  background: linear-gradient(135deg, #d29d86 0%, #C18671 100%);
-}
-
-// Portfolio Website (3rd project) - Pastel Brown/Rose
-.coding-project-section:nth-child(5) {
+// Portfolio Website - Pastel Brown/Rose
+.coding-project-section:nth-child(10) {
   background: linear-gradient(135deg, #d4a574 0%, #c49a7b 50%, #b08968 100%);
 }
 
-// Globetrekker (4th project) - Pastel Pink
-.coding-project-section:nth-child(6) {
+// Whisky Baking - Brown
+.coding-project-section:nth-child(11) {
+  background: linear-gradient(135deg, #d29d86 0%, #C18671 100%);
+}
+
+// Globetrekker - Pastel Pink
+.coding-project-section:nth-child(12) {
   background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 50%, #f48fb1 100%);
 }
 
-// Adjust text colors for pastel backgrounds
-.coding-project-section:nth-child(3),
-.coding-project-section:nth-child(5),
-.coding-project-section:nth-child(6) {
+// Adjust text colors for pastel backgrounds (Palette, Portfolio, Globetrekker)
+.coding-project-section:nth-child(9),
+.coding-project-section:nth-child(10),
+.coding-project-section:nth-child(12) {
   .coding-project-title {
     color: #5d4037;
     background: linear-gradient(135deg, #5d4037, #8d6e63);
@@ -136,28 +166,28 @@
   background: #333;
 }
 
-// Adjust Whisky Baking image positioning (2nd project)
-.coding-project-section:nth-child(4) .coding-project-img {
+// Adjust Whisky Baking image positioning
+.coding-project-section:nth-child(11) .coding-project-img {
   object-position: center 20%;
   transform: scale(1.1);
 }
 
-.coding-project-section:nth-child(4) .project-image-container:hover .coding-project-img {
+.coding-project-section:nth-child(11) .project-image-container:hover .coding-project-img {
   transform: scale(1.2);
 }
 
-// Adjust Portfolio Website image (3rd project) - Zoom out to reduce blur
-.coding-project-section:nth-child(5) .project-image-container {
+// Adjust Portfolio Website image - Zoom out to reduce blur
+.coding-project-section:nth-child(10) .project-image-container {
   background-color: #f8f5ef;
 }
 
-.coding-project-section:nth-child(5) .coding-project-img {
+.coding-project-section:nth-child(10) .coding-project-img {
   transform: scale(0.8);
   object-fit: contain;
   background: transparent;
 }
 
-.coding-project-section:nth-child(5) .project-image-container:hover .coding-project-img {
+.coding-project-section:nth-child(10) .project-image-container:hover .coding-project-img {
   transform: scale(0.9);
 }
 
@@ -185,7 +215,11 @@
 
 .project-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
+  justify-content: center;
+  max-width: 100%;
+  padding: 0 0.5rem;
 }
 
 .project-link {
