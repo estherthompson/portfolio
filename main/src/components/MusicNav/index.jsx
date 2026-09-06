@@ -29,7 +29,7 @@ const WHEEL_TILT = {
 };
 const WHEEL_REST = { rotateX: 0, rotateY: 0, y: 0, scale: 1 };
 
-const MusicNav = ({ colorScheme = 'brown' }) => {
+const MusicNav = ({ colorScheme = 'brown', embedded = false, onMinimizedChange }) => {
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -202,23 +202,32 @@ const MusicNav = ({ colorScheme = 'brown' }) => {
 
     const volumePct = Math.round((isMuted ? 0 : volume) * 100);
 
+    const setPlayerMinimized = (nextMinimized) => {
+        setMinimized(nextMinimized);
+        onMinimizedChange?.(nextMinimized);
+    };
+
     return (
         <>
             <audio ref={audioRef} preload="metadata" />
 
-            <div className={`ipod-widget ${colorScheme}`}>
-                <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+                layout={!reduceMotion}
+                transition={{ layout: { type: 'spring', stiffness: 360, damping: 34, mass: 0.75 } }}
+                className={`ipod-widget ${colorScheme}${embedded ? ' ipod-widget--embedded' : ''}`}
+            >
+                <AnimatePresence mode="sync" initial={false}>
                     {minimized ? (
                         <motion.button
                             key="mini"
                             type="button"
                             className="ipod-mini"
-                            onClick={() => setMinimized(false)}
+                            onClick={() => setPlayerMinimized(false)}
                             aria-label={`Expand music player — ${currentSong.title} by ${currentSong.artist}`}
-                            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.3 }}
-                            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
-                            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.3 }}
-                            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.82, x: -10 }}
+                            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, x: 0 }}
+                            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.82, x: -10 }}
+                            transition={{ type: 'spring', stiffness: 430, damping: 34, mass: 0.65 }}
                             whileTap={reduceMotion ? undefined : { scale: 0.94 }}
                         >
                             <span className="ipod-mini__art">
@@ -230,10 +239,10 @@ const MusicNav = ({ colorScheme = 'brown' }) => {
                         <motion.div
                             key="full"
                             className="ipod"
-                            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.3, y: 20 }}
+                            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 12 }}
                             animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
-                            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.3, y: 20 }}
-                            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 12 }}
+                            transition={{ type: 'spring', stiffness: 360, damping: 34, mass: 0.75 }}
                         >
                             <div className="ipod__device">
                                 {/* Screen content sits BEHIND the shell; the transparent
@@ -299,7 +308,7 @@ const MusicNav = ({ colorScheme = 'brown' }) => {
                                 <motion.button
                                     type="button"
                                     className="ipod__minimize"
-                                    onClick={() => setMinimized(true)}
+                                    onClick={() => setPlayerMinimized(true)}
                                     aria-label="Minimize music player"
                                     whileTap={reduceMotion ? undefined : { scale: 0.9 }}
                                 >
@@ -414,7 +423,7 @@ const MusicNav = ({ colorScheme = 'brown' }) => {
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </div>
+            </motion.div>
         </>
     );
 }

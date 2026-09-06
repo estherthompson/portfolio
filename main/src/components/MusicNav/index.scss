@@ -26,6 +26,16 @@
   font-family: 'Silkscreen', ui-monospace, 'Courier New', monospace;
 }
 
+/* On the homepage, the same player lives in the portrait column rather than
+   floating over the viewport. It is centered beneath the image in normal flow. */
+.ipod-widget--embedded {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  width: min(100%, 300px);
+  flex: 0 0 auto;
+}
+
 /* ---------- Full device ---------- */
 .ipod {
   position: relative;

@@ -23,7 +23,7 @@ const Layout = () => {
             {/* <span className='tags top-tags'>&lt;body&gt;</span> */}
             <Outlet /> 
         </div>
-        <MusicNav colorScheme={getColorScheme()} />
+        {location.pathname !== '/' && <MusicNav colorScheme={getColorScheme()} />}
     </div>
     )
 }

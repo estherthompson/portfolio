@@ -1,10 +1,26 @@
+import { useCallback, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import './index.scss';
 import ProfileImage from '../../assets/images/profile.webp';
 import Image_8 from '../../assets/images/8.webp';
 import Image_9 from '../../assets/images/9.webp';
+import MusicNav from '../MusicNav';
 
 const Home = () => {
+    const [musicMinimized, setMusicMinimized] = useState(false);
+    const [minimizedPortraitHeight, setMinimizedPortraitHeight] = useState(null);
+    const portraitImageRef = useRef(null);
+    const reduceMotion = useReducedMotion();
+    const layoutTransition = reduceMotion
+        ? { duration: 0 }
+        : { type: 'spring', stiffness: 360, damping: 34, mass: 0.75 };
+
+    const captureMinimizedPortraitHeight = useCallback(() => {
+        const height = Math.round(portraitImageRef.current?.getBoundingClientRect().height ?? 0);
+        if (height > 0) setMinimizedPortraitHeight(height);
+    }, []);
+
     const handleResumeDownload = () => {
         const link = document.createElement('a');
         link.href = '/Esther_Thompson_Resume.pdf';
@@ -21,7 +37,12 @@ const Home = () => {
                 <img src={Image_9} alt="Image_9" />
             </div>
 
-            <div className="home-page">
+            <div
+                className="home-page"
+                style={minimizedPortraitHeight
+                    ? { '--hero-card-height': `${minimizedPortraitHeight}px` }
+                    : undefined}
+            >
                 <section className="hero-card" aria-label="Introduction">
                     <span className="hero-note" aria-hidden="true">
                         Same Human
@@ -113,9 +134,27 @@ const Home = () => {
                     </ul>
                 </section>
 
-                <div className="image-container">
-                    <img src={ProfileImage} alt="Profile" width="252" height="336" />
-                </div>
+                <motion.div
+                    layout={!reduceMotion}
+                    transition={{ layout: layoutTransition }}
+                    onLayoutAnimationComplete={() => {
+                        if (musicMinimized) captureMinimizedPortraitHeight();
+                    }}
+                    className={musicMinimized ? 'portrait-stack portrait-stack--music-minimized' : 'portrait-stack'}
+                >
+                    <motion.div
+                        layout={!reduceMotion}
+                        transition={{ layout: layoutTransition }}
+                        className="image-container"
+                    >
+                        <img ref={portraitImageRef} src={ProfileImage} alt="Profile" width="252" height="336" />
+                    </motion.div>
+                    <MusicNav
+                        embedded
+                        colorScheme="brown"
+                        onMinimizedChange={setMusicMinimized}
+                    />
+                </motion.div>
             </div>
         </>
     );
