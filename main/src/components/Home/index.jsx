@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import './index.scss';
@@ -11,10 +11,40 @@ const Home = () => {
     const [musicMinimized, setMusicMinimized] = useState(false);
     const [minimizedPortraitHeight, setMinimizedPortraitHeight] = useState(null);
     const portraitImageRef = useRef(null);
+    const heroRef = useRef(null);
+    const introRef = useRef(null);
+    const portraitStackRef = useRef(null);
     const reduceMotion = useReducedMotion();
     const layoutTransition = reduceMotion
         ? { duration: 0 }
         : { type: 'spring', stiffness: 360, damping: 34, mass: 0.75 };
+
+    useLayoutEffect(() => {
+        const hero = heroRef.current;
+        const intro = introRef.current;
+        const portrait = portraitStackRef.current;
+        const portraitImage = portraitImageRef.current;
+        if (!hero || !intro || !portrait || !portraitImage) return undefined;
+
+        // Read layout coordinates, unaffected by card entrance transforms.
+        const positionDecorations = () => {
+            const portraitRight = portrait.offsetLeft + portraitImage.offsetWidth;
+            const positions = {
+                '--star-left': `${intro.offsetLeft}px`,
+                '--star-top': `${intro.offsetTop + intro.offsetHeight * 0.92}px`,
+                '--saturn-left': `${portraitRight}px`,
+                '--saturn-top': `${portrait.offsetTop}px`,
+                '--saturn-space': `${Math.max(0, hero.clientWidth - portraitRight - 10) / 0.76}px`,
+            };
+            Object.entries(positions).forEach(([property, value]) => {
+                hero.style.setProperty(property, value);
+            });
+        };
+        positionDecorations();
+        const observer = new ResizeObserver(positionDecorations);
+        [hero, intro, portrait].forEach(element => observer.observe(element));
+        return () => observer.disconnect();
+    }, []);
 
     const captureMinimizedPortraitHeight = useCallback(() => {
         const height = Math.round(portraitImageRef.current?.getBoundingClientRect().height ?? 0);
@@ -30,20 +60,20 @@ const Home = () => {
 
     return (
         <>
-            <div className="star-container">
-                <img src={Image_8} alt="Image_8" />
-            </div>
-            <div className="image-9-container">
-                <img src={Image_9} alt="Image_9" />
-            </div>
-
             <div
+                ref={heroRef}
                 className="home-page"
                 style={minimizedPortraitHeight
                     ? { '--hero-card-height': `${minimizedPortraitHeight}px` }
                     : undefined}
             >
-                <section className="hero-card" aria-label="Introduction">
+                <div className="star-container" aria-hidden="true">
+                    <img src={Image_8} alt="" />
+                </div>
+                <div className="image-9-container" aria-hidden="true">
+                    <img src={Image_9} alt="" />
+                </div>
+                <section ref={introRef} className="hero-card" aria-label="Introduction">
                     <span className="hero-note" aria-hidden="true">
                         Same Human
                         <br />
@@ -135,6 +165,7 @@ const Home = () => {
                 </section>
 
                 <motion.div
+                    ref={portraitStackRef}
                     layout={!reduceMotion}
                     transition={{ layout: layoutTransition }}
                     onLayoutAnimationComplete={() => {
