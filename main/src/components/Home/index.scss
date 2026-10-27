@@ -1,31 +1,3 @@
-@keyframes typewriter {
-  from {
-    max-width: 0;
-  }
-  to {
-    max-width: 100%;
-    opacity: 1;
-  }
-}
-
-@keyframes blink {
-  50% {
-    border-color: transparent;
-  }
-}
-
-@keyframes removeCursor {
-  to {
-    border-color: transparent;
-  }
-}
-
-@keyframes cursorAppear {
-  to {
-    border-right: 9px solid #91713c;
-  }
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -35,180 +7,375 @@
   }
 }
 
-@keyframes sparkle {
-  0% {
+@keyframes heroRise {
+  from {
     opacity: 0;
-    transform: scale(0) rotate(0deg);
+    transform: translateY(18px);
   }
-  50% {
+  to {
     opacity: 1;
-    transform: scale(1.2) rotate(180deg);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0) rotate(360deg);
-  }
-}
-
-@keyframes letterSparkle {
-  0% {
-    text-shadow: 
-      0 0 5px rgba(255, 255, 255, 0),
-      0 0 10px rgba(255, 255, 255, 0),
-      0 0 15px rgba(255, 255, 255, 0);
-  }
-  20% {
-    text-shadow: 
-      0 0 5px rgba(255, 255, 255, 0.8),
-      0 0 10px rgba(255, 255, 255, 0.6),
-      0 0 15px rgba(255, 255, 255, 0.4);
-  }
-  80% {
-    text-shadow: 
-      0 0 5px rgba(255, 255, 255, 0.8),
-      0 0 10px rgba(255, 255, 255, 0.6),
-      0 0 15px rgba(255, 255, 255, 0.4);
-  }
-  100% {
-    text-shadow: 
-      0 0 5px rgba(255, 255, 255, 0),
-      0 0 10px rgba(255, 255, 255, 0),
-      0 0 15px rgba(255, 255, 255, 0);
+    transform: translateY(0);
   }
 }
 
 .home-page {
-  overflow: hidden;
-  min-height: 3vh;
+  box-sizing: border-box;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 5vh 5vw;
+  overflow: visible;
   width: 100%;
-}
-
-.text-zone {
-  position: fixed;
-  top: 20vh;
-  left: 17vw;
-  width: clamp(150px, 25vw, 400px);
-  aspect-ratio: 3/4;
-  margin: 0;
-  z-index: 2;
-  pointer-events: none;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+  min-height: calc(100dvh - 92px); /* fill the space below the fixed navbar */
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2rem;
+  gap: clamp(2rem, 4vw, 5rem);
+  padding: clamp(2rem, 4vh, 4.5rem) clamp(1.6rem, 5vw, 6rem);
+  padding-bottom: clamp(4rem, 6vh, 7rem);
 }
 
-.text-zone h1,
-.text-zone h2,
-.text-zone h3, 
-.text-zone h4 {
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid transparent;
-  display: block;
-  max-width: 0;
-  margin: 0;
-  padding: 0;
-  color: inherit;
-  opacity: 1;
+/* ============================================================
+   Left hero intro card
+   ============================================================ */
+.hero-card,
+.hero-card * {
+  box-sizing: border-box;
+}
+
+.hero-card {
+  --hero-brown: #5a4423;
+  --hero-gold: #91713c;
+  --hero-gold-deep: #795f35;
+  --hero-muted: #6f5c40;
+  --hero-cream: #f7f2e8;
+  --hero-on-gold: #f8f5ef;
+  --hero-divider: rgba(121, 95, 53, 0.22);
+
   position: relative;
-  left: 0;
-  width: 100%;
-  transition: all 0.3s ease;
-}
+  z-index: 21;
+  flex: 1 1 520px;
+  max-width: 680px;
 
-.text-zone h1 {
-  color: #795f35;
-  font-family: 'Migra-Extrabold', sans-serif;
-  font-size: clamp(1.5rem, 3vw, 4rem);
-  animation: typewriter 1s steps(50, end) 2s forwards,
-             cursorAppear 0.1s 2s forwards,
-             blink 0.5s step-end infinite alternate 2s,
-             removeCursor 0.1s 3s forwards;
-}
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 
-.text-zone h2 {
-  color: #795f35;
-  font-family: 'Migra-Extrabold', sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 3rem);
-  animation: typewriter 1.5s steps(50, end) 3.5s forwards,
-             cursorAppear 0.1s 3.5s forwards,
-             blink 0.5s step-end infinite alternate 3.5s,
-             removeCursor 0.1s 5s forwards;
-}
+  padding: clamp(2.8rem, 3.4vw, 4.4rem) clamp(2.8rem, 3.2vw, 4rem);
+  background: var(--hero-cream);
+  border-radius: clamp(40px, 3vw, 50px);
+  box-shadow:
+    0 30px 60px -32px rgba(74, 58, 41, 0.28),
+    0 8px 24px rgba(74, 58, 41, 0.06);
 
-.text-zone h3 {
-  color: #795f35;
-  font-family: 'Migra-Extrabold', sans-serif;
-  font-size: clamp(1rem, 2vw, 2.0rem);
-  animation: typewriter 2s steps(50, end) 5.5s forwards,
-             cursorAppear 0.1s 5.5s forwards,
-             blink 0.5s step-end infinite alternate 5.5s,
-             removeCursor 0.1s 7.5s forwards;
-  text-align: center;
-}
-
-.text-zone h4 {
-  color: #795f35;
-  font-family: 'Migra-Extrabold', sans-serif;
-  font-size: clamp(1rem, 2vw, 2.0rem);
-  animation: typewriter 2.5s steps(50, end) 8s forwards,
-             cursorAppear 0.1s 8s forwards,
-             blink 0.5s step-end infinite alternate 8s;
-  text-align: center;
-}
-
-.background-zone {
-  position: fixed;
-  top: 20vh;
-  left: 15vw;
-  width: clamp(150px, 25vw, 400px);
-  aspect-ratio: 3/4;
-  margin: 0;
-  z-index: 1;
-  pointer-events: none;
   opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+  animation: heroRise 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.2s forwards;
 }
 
-.background-zone img {
-  display: block;
-  width: 120%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 10%;
-  border: solid 5px #f8f5ef;
-  background-color: #f8f5ef;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-  transition: box-shadow 0.3s ease;
+/* Handwritten decorative note, upper-right */
+.hero-note {
+  position: absolute;
+  top: clamp(2.2rem, 2.6vw, 3.4rem);
+  right: clamp(2.6rem, 3vw, 4rem);
+  font-family: 'LaBelleAurore-Regular', cursive;
+  font-size: clamp(1.7rem, 1.9vw, 2.3rem);
+  line-height: 1.15;
+  text-align: right;
+  color: rgba(145, 113, 60, 0.72);
+  transform: rotate(-9deg);
   pointer-events: none;
+}
+
+.hero-note__heart {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 1.6rem;
+}
+
+/* Eyebrow */
+.hero-eyebrow {
+  margin: 0;
+  font-family: 'BarlowSemiCondensed-Regular', sans-serif;
+  font-size: clamp(1.2rem, 1.2vw, 1.4rem);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--hero-gold);
+}
+
+.hero-eyebrow__star {
+  margin-left: 0.4em;
+  letter-spacing: 0;
+}
+
+/* Serif heading */
+.hero-title {
+  margin: clamp(1.4rem, 1.8vw, 2rem) 0 0;
+  font-family: 'Migra-Extrabold', Georgia, serif;
+  font-weight: 400;
+  color: var(--hero-brown);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+
+.hero-title__line {
+  display: block;
+  font-size: clamp(3.4rem, 4.4vw, 5.6rem);
+}
+
+/* Supporting text */
+.hero-subtitle {
+  margin: clamp(1.6rem, 1.8vw, 2.2rem) 0 0;
+  font-family: 'BarlowSemiCondensed-Regular', sans-serif;
+  font-size: clamp(1.7rem, 1.8vw, 2.1rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  color: var(--hero-muted);
+}
+
+/* Short rule */
+.hero-rule {
+  display: block;
+  width: 52px;
+  height: 2px;
+  margin: clamp(1.8rem, 2vw, 2.4rem) 0 0;
+  background: var(--hero-gold);
+  border-radius: 2px;
+}
+
+/* Description */
+.hero-desc {
+  margin: clamp(1.6rem, 1.8vw, 2.2rem) 0 0;
+  font-family: 'BarlowSemiCondensed-Regular', sans-serif;
+  font-size: clamp(1.7rem, 1.9vw, 2.2rem);
+  line-height: 1.5;
+  color: var(--hero-muted);
+}
+
+/* ---------- Buttons ---------- */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.4rem;
+  margin-top: clamp(2.4rem, 3vw, 3.4rem);
+}
+
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.4rem 2.6rem;
+  border-radius: 999px;
+  font-family: 'BarlowSemiCondensed-Regular', sans-serif;
+  font-size: clamp(1.5rem, 1.6vw, 1.75rem);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.25s ease, background-color 0.25s ease,
+    color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-btn__arrow {
+  transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.hero-btn__icon {
+  flex-shrink: 0;
+}
+
+.hero-btn--filled {
+  border: 1.5px solid transparent;
+  background: linear-gradient(135deg, var(--hero-gold) 0%, var(--hero-gold-deep) 100%);
+  color: var(--hero-on-gold);
+  box-shadow: 0 10px 22px -8px rgba(121, 95, 53, 0.5);
+}
+
+.hero-btn--outline {
+  border: 1.5px solid var(--hero-gold);
+  background: transparent;
+  color: var(--hero-gold-deep);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-btn--filled:hover {
+    box-shadow: 0 14px 26px -8px rgba(121, 95, 53, 0.55);
+    transform: translateY(-2px);
+  }
+  .hero-btn--outline:hover {
+    background: var(--hero-gold-deep);
+    border-color: var(--hero-gold-deep);
+    color: var(--hero-on-gold);
+    transform: translateY(-2px);
+  }
+  .hero-btn:hover .hero-btn__arrow {
+    transform: translateX(4px);
+  }
+}
+
+.hero-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ---------- Feature row ---------- */
+.hero-features {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.6rem, 2.4vw, 3rem);
+  margin: clamp(2.6rem, 3.2vw, 3.8rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hero-feature {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  position: relative;
+}
+
+.hero-feature + .hero-feature {
+  padding-left: clamp(1.6rem, 2.4vw, 3rem);
+}
+
+.hero-feature + .hero-feature::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 34px;
+  background: var(--hero-divider);
+}
+
+.hero-feature__icon {
+  width: clamp(2.4rem, 2.6vw, 3rem);
+  height: clamp(2.4rem, 2.6vw, 3rem);
+  color: var(--hero-gold);
+  flex-shrink: 0;
+}
+
+.hero-feature__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.hero-feature__label {
+  font-family: 'BarlowSemiCondensed-Bold', sans-serif;
+  font-size: clamp(1.3rem, 1.3vw, 1.55rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hero-brown);
+}
+
+.hero-feature__value {
+  font-family: 'BarlowSemiCondensed-Regular', sans-serif;
+  font-size: clamp(1.3rem, 1.4vw, 1.6rem);
+  color: var(--hero-muted);
+}
+
+/* Keep the desktop hero compact enough to leave room for future utilities
+   near the portrait/iPod. These are proportional reductions rather than a
+   transform, so the card's layout footprint shrinks with its content. */
+@media (min-width: 861px) {
+  .hero-card {
+    padding-block: clamp(2.4rem, 2.8vw, 3.6rem);
+  }
+
+  .hero-note {
+    top: clamp(1.9rem, 2.2vw, 2.8rem);
+    right: clamp(2.2rem, 2.6vw, 3.2rem);
+    font-size: clamp(1.55rem, 1.65vw, 2rem);
+  }
+
+  .hero-title {
+    margin-top: clamp(1.1rem, 1.4vw, 1.5rem);
+  }
+
+  .hero-title__line {
+    font-size: clamp(3.2rem, 3.9vw, 5rem);
+  }
+
+  .hero-subtitle {
+    margin-top: clamp(1.3rem, 1.5vw, 1.7rem);
+    font-size: clamp(1.55rem, 1.65vw, 1.9rem);
+  }
+
+  .hero-rule {
+    margin-top: clamp(1.4rem, 1.6vw, 1.8rem);
+  }
+
+  .hero-desc {
+    margin-top: clamp(1.3rem, 1.5vw, 1.7rem);
+    font-size: clamp(1.55rem, 1.7vw, 2rem);
+  }
+
+  .hero-actions {
+    gap: 1.2rem;
+    margin-top: clamp(2rem, 2.4vw, 2.6rem);
+  }
+
+  .hero-btn {
+    gap: 0.75rem;
+    padding: 1.2rem 2.2rem;
+    font-size: clamp(1.4rem, 1.45vw, 1.65rem);
+  }
+
+  .hero-features {
+    gap: clamp(1.3rem, 2vw, 2.4rem);
+    margin-top: clamp(2rem, 2.5vw, 2.8rem);
+  }
+
+  .hero-feature {
+    gap: 0.9rem;
+  }
+
+  .hero-feature + .hero-feature {
+    padding-left: clamp(1.3rem, 2vw, 2.4rem);
+  }
+
+  .hero-feature + .hero-feature::before {
+    height: 29px;
+  }
+
+  .hero-feature__icon {
+    width: clamp(2.2rem, 2.3vw, 2.6rem);
+    height: clamp(2.2rem, 2.3vw, 2.6rem);
+  }
+
+  .hero-feature__label {
+    font-size: clamp(1.2rem, 1.2vw, 1.4rem);
+  }
+
+  .hero-feature__value {
+    font-size: clamp(1.2rem, 1.25vw, 1.45rem);
+  }
+}
+
+/* ============================================================
+   Portrait and its inline music player
+   ============================================================ */
+.portrait-stack {
+  position: relative;
+  z-index: 21;
+  flex: 0 1 clamp(280px, 30vw, 430px);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.4rem, 2vw, 2.4rem);
 }
 
 .image-container {
-  position: fixed;
-  top: 20vh;
-  left: 55vw;
-  width: clamp(150px, 25vw, 400px);
+  width: 100%;
   aspect-ratio: 3/4;
   margin: 0;
-  z-index: 1;
-  pointer-events: none;
   opacity: 0;
   animation: fadeIn 1s ease-in forwards;
 }
 
 .image-container img {
   display: block;
-  width: 120%;
+  width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 10%;
@@ -216,16 +383,69 @@
   background-color: #f8f5ef;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
   transition: box-shadow 0.3s ease;
-  pointer-events: none;
 }
 
+/* A minimized player becomes a small side utility, not a flex-row item that
+   reserves height beneath the portrait. */
+.portrait-stack--music-minimized .ipod-widget--embedded {
+  position: absolute;
+  right: -5.8rem;
+  bottom: 1.2rem;
+  width: 4rem;
+  z-index: 2;
+}
+
+.portrait-stack--music-minimized .ipod-mini {
+  width: 4rem;
+  border-radius: 12px;
+}
+
+.portrait-stack--music-minimized .ipod-mini__art svg {
+  width: 38%;
+  height: 38%;
+}
+
+/* Keep the card and portrait aligned at their top edges. The portrait column
+   scales with available viewport height so its inline iPod never falls below
+   the fold on shorter laptop screens. */
+@media (min-width: 861px) {
+  .home-page {
+    align-items: flex-start;
+  }
+
+  /* Fixed desktop reference height: this stays stable while only the
+     portrait/player column moves on music toggle. */
+  .hero-card {
+    height: var(--hero-card-height, 583px);
+  }
+
+  .portrait-stack:not(.portrait-stack--music-minimized) {
+    flex-basis: min(430px, calc(51dvh - 72px));
+  }
+
+  .portrait-stack--music-minimized {
+    flex-basis: clamp(280px, 30vw, 430px);
+  }
+
+  .ipod-widget--embedded {
+    width: min(76%, 300px);
+  }
+}
+
+/* ============================================================
+   Decorative images anchored to the hero's card edges
+   ============================================================ */
 .star-container {
-  position: fixed;
-  top: 2vh;
-  left: 2vw;
-  width: clamp(250px, 35vw, 700px);
-  aspect-ratio: 1/1;
-  z-index: 20;
+  position: absolute;
+  top: var(--star-top);
+  left: var(--star-left);
+  width: clamp(240px, 24vw, 340px);
+  aspect-ratio: 1366/768;
+  // Account for the transparent canvas: about 40% of the main star is outside.
+  transform: translate(-44%, -50%);
+  pointer-events: none;
+  overflow: visible;
+  z-index: 22;
   opacity: 0;
   animation: fadeIn 1s ease-in forwards;
 }
@@ -239,256 +459,144 @@
 }
 
 .image-9-container {
-  position: fixed;
-  top: -12vh;
-  right: 5vw;
-  width: clamp(200px, 25vw, 500px);
-  aspect-ratio: 1/1;
-  z-index: 20;
+  position: absolute;
+  top: var(--saturn-top);
+  left: var(--saturn-left);
+  width: min(clamp(160px, 16vw, 210px), var(--saturn-space));
+  aspect-ratio: 1366/768;
+  // The visible ring overlaps the right edge by roughly a quarter.
+  transform: translate(-32%, -10%);
+  pointer-events: none;
+  overflow: visible;
+  z-index: 22;
   opacity: 0;
   animation: fadeIn 1s ease-in forwards;
-  transform: rotate(25deg);
 }
 
 .image-9-container img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transform: rotate(25deg);
   filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
   transition: transform 0.3s ease;
 }
 
-/* Glowing Slogan Quote */
-.slogan-quote {
-  position: fixed;
-  top: 85%;
-  left: 52%;
-  transform: translate(-50%, -50%);
-  z-index: 5;
-  opacity: 0;
-  animation: fadeIn 1s ease-in 10.5s forwards;
-  width: auto;
-  max-width: 90vw;
-  text-align: center;
-  padding-bottom: 2rem;
-}
-
-.slogan-quote p {
-  font-family: 'Migra-Extrabold', sans-serif;
-  font-weight: 400;
-  font-style: italic;
-  font-size: clamp(1rem, 2vw, 2rem);
-  color: #91713c;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  letter-spacing: 0.5px;
-  line-height: 1.4;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-  overflow: visible;
-  width: auto;
-}
-
-.slogan-quote p:hover {
-  text-shadow: 
-    0 0 15px rgba(255, 255, 255, 0.8),
-    0 0 20px rgba(255, 255, 255, 0.6),
-    0 0 25px rgba(255, 255, 255, 0.4);
-  transform: scale(1.05);
-}
-
-/* Cycling word styles */
-.cycling-word {
-  display: inline-block;
-  font-weight: 600;
-  position: relative;
-}
-
-.digital-word {
-  color: #91713c;
-  text-shadow: 0 0 8px rgba(145, 113, 60, 0.3);
-}
-
-.real-word {
-  color: #91713c;
-  display: inline-block;
-  width: 150px;
-  text-align: left;
-}
-
-.cycling-word:hover {
-  transform: scale(1.1);
-  transition: transform 0.3s ease;
-}
-
-/* Resume Download Button */
-.resume-download-container {
-  margin-top: 2rem;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.resume-download-btn {
-  background: linear-gradient(135deg, #91713c 0%, #795f35 100%);
-  border: 2px solid #f8f5ef;
-  border-radius: 50px;
-  padding: 0.8rem 1.6rem;
-  color: #f8f5ef;
-  font-family: 'DM Serif Text', serif;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  outline: none;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  box-shadow: 0 4px 15px rgba(145, 113, 60, 0.3);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.resume-download-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.resume-download-btn:hover::before {
-  left: 100%;
-}
-
-.resume-download-btn:hover {
-  background: linear-gradient(135deg, #795f35 0%, #91713c 100%);
-  box-shadow: 0 6px 20px rgba(145, 113, 60, 0.4);
-  border-color: #fff;
-}
-
-.btn-icon {
-  font-size: 1.2rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
-
-.btn-text {
-  font-style: normal;
-  letter-spacing: 0.5px;
-}
-
-/* Mobile responsive resume button */
-@media (max-width: 700px) {
-  .resume-download-container {
-    margin-top: 1.5rem;
-  }
-  
-  .resume-download-btn {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
-    gap: 0.5rem;
-  }
-  
-  .btn-icon {
-    font-size: 1rem;
-  }
-  
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 1024px) {
   .home-page {
-    padding: 0.5vh 1vw;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 3rem;
-    overflow: visible;
+    gap: clamp(1.4rem, 3vw, 3rem);
   }
-  
-  .text-zone {
-    position: absolute;
-    top: 0;
-    left: 0;
+
+  .hero-card {
+    flex-basis: 470px;
+  }
+
+  .portrait-stack {
+    flex-basis: clamp(230px, 32vw, 330px);
+  }
+}
+
+/* Stack the card above the portrait on narrow screens */
+@media (max-width: 860px) {
+  .home-page {
+    flex-direction: column;
+    min-height: auto;
+    gap: clamp(2rem, 5vw, 3rem);
+    padding-top: clamp(2rem, 5vh, 4rem);
+    padding-bottom: clamp(4rem, 8vh, 6rem);
+  }
+
+  .hero-card {
+    flex: 0 1 auto;
     width: 100%;
-    max-width: 120px;
-    margin: 0;
-    padding: 0.5rem;
-    aspect-ratio: auto;
-    height: 100%;
+    max-width: 620px;
+    animation: fadeIn 0.9s ease-in 0.2s forwards;
   }
-  
-  .background-zone {
-    position: relative;
-    top: 1vh;
-    left: 0;
+
+  .portrait-stack {
+    flex: 0 1 auto;
     width: 100%;
-    max-width: 120px;
-    margin: 0;
-    margin-right: 1rem;
-    aspect-ratio: auto;
-    height: 160px;
+    max-width: 320px;
   }
-  
+
   .image-container {
-    position: relative;
-    top: 1vh;
-    left: 0;
     width: 100%;
-    max-width: 120px;
-    margin: 0;
-    margin-left: 1rem;
-    aspect-ratio: auto;
-    height: 160px;
+    aspect-ratio: 3/4;
   }
-  
+
   .star-container,
   .image-9-container {
     display: none;
   }
-  
-  /* Scale down text sizes for mobile */
-  .text-zone h1 {
-    font-size: clamp(0.7rem, 2.5vw, 1.3rem);
-  }
-  
-  .text-zone h2 {
-    font-size: clamp(0.6rem, 2vw, 1.1rem);
-  }
-  
-  .text-zone h3 {
-    font-size: clamp(0.5rem, 1.8vw, 1rem);
-  }
-  
-  .text-zone h4 {
-    font-size: clamp(0.5rem, 1.8vw, 1rem);
-  }
-  
-  /* Mobile responsive slogan */
-  .slogan-quote {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    width: 100%;
-    max-width: 90vw;
-    padding: 0 1rem 1rem 1rem;
-  }
-  
-  .slogan-quote p {
-    font-size: clamp(0.8rem, 2.5vw, 1.5rem);
-    white-space: normal;
-    text-align: center;
-    max-width: 100%;
-    animation: none;
-    overflow: visible;
-    word-wrap: break-word;
+}
+
+@media (max-width: 480px) {
+  .portrait-stack--music-minimized .ipod-widget--embedded {
+    right: 1.2rem;
+    bottom: 1.2rem;
   }
 }
 
+@media (max-width: 480px) {
+  .hero-card {
+    padding: 2.6rem 2.2rem;
+    border-radius: 34px;
+  }
 
+  .hero-title__line {
+    font-size: clamp(3rem, 8.5vw, 4rem);
+  }
 
+  .hero-note {
+    position: static;
+    display: block;
+    margin: 0 0 1.4rem auto;
+    transform: rotate(-6deg);
+    font-size: 1.7rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .hero-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 1.3rem 1.8rem;
+  }
+
+  .hero-features {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.4rem;
+  }
+
+  .hero-feature + .hero-feature::before {
+    display: none;
+  }
+
+  .hero-feature + .hero-feature {
+    padding-left: 0;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-card,
+  .image-container,
+  .star-container,
+  .image-9-container {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .hero-btn,
+  .hero-btn__arrow {
+    transition: none !important;
+  }
+}

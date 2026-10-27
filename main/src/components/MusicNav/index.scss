@@ -1,465 +1,528 @@
-/* Bottom Music Navigation Bar */
-.bottom-music-nav {
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+
+/* ==================================================================
+   Floating iPod-style music player
+   Geometry measured from ipod.png (577x433):
+     screen hole  x 8.0%-52.5%, y 23.6%-68.1%
+     click wheel  center (75.6%, 45.5%), radius 15.8% of width
+   ================================================================== */
+.ipod-widget {
+  --ipod-body: #4a3a29;
+  --ipod-gold: #91713c;
+  --ipod-gold-deep: #795f35;
+  --ipod-wheel-text: #6b5330;
+  --ipod-cream: #f8f5ef;
+  --lcd-bg: #0e0b08;
+  --lcd-fg: #e8dcc4;
+  --lcd-accent: #e7c98f;
+
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  border-top: 2px solid;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.3);
-  z-index: 25;
-  font-family: 'DM Serif Text', serif;
-  padding: 0.8rem 1.5rem;
-  transition: all 0.3s ease;
+  right: clamp(1rem, 2.4vw, 2.4rem);
+  bottom: clamp(1rem, 2.4vw, 2.2rem);
+  z-index: 30;
+  width: clamp(224px, 24vw, 300px);
+  display: flex;
+  justify-content: flex-end;
+  font-family: 'Silkscreen', ui-monospace, 'Courier New', monospace;
 }
 
-/* Brown Color Scheme */
-.bottom-music-nav.brown {
-  background: linear-gradient(135deg, rgba(145, 113, 60, 0.95) 0%, rgba(121, 95, 53, 0.95) 100%);
-  border-top-color: #f8f5ef;
-  color: #f8f5ef;
+/* On the homepage, the same player lives in the portrait column rather than
+   floating over the viewport. It is centered beneath the image in normal flow. */
+.ipod-widget--embedded {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  width: min(100%, 300px);
+  flex: 0 0 auto;
 }
 
-/* Cream Color Scheme */
-.bottom-music-nav.cream {
-  background: linear-gradient(135deg, rgba(248, 245, 239, 0.95) 0%, rgba(240, 235, 225, 0.95) 100%);
-  border-top-color: #91713c;
-  color: #91713c;
+/* ---------- Full device ---------- */
+.ipod {
+  position: relative;
+  width: 100%;
 }
 
-.music-nav-content {
+.ipod__device {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 577 / 433;
+}
+
+.ipod__shell {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 2;
+  pointer-events: none; /* clicks fall through to the screen behind it */
+  filter: drop-shadow(0 14px 26px rgba(40, 28, 15, 0.38));
+  user-select: none;
+}
+
+/* ---------- LCD screen (behind the shell, framed by the bezel) ---------- */
+.ipod__screen {
+  position: absolute;
+  left: 7.5%;
+  top: 23%;
+  width: 45.4%;
+  height: 45.6%;
+  z-index: 1;
+  background: var(--lcd-bg);
+  overflow: hidden;
+  color: var(--lcd-fg);
+}
+
+.ipod__screen-inner {
+  position: absolute;
+  inset: 0;
+  padding: 7% 8%;
+}
+
+.ipod__scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.16) 3px
+  );
+  opacity: 0.5;
+}
+
+/* Now Playing */
+.ipod__now {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  gap: 1.5rem;
+  gap: 7%;
+  height: 100%;
 }
 
-/* Song Info Section */
-.song-info-section {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  min-width: 200px;
-}
-
-.music-icon {
-  width: 1.2rem;
-  height: 1.2rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+.ipod__cover {
+  width: 38%;
+  aspect-ratio: 1;
   flex-shrink: 0;
+  background: #1a140d;
+  border: 1px solid rgba(232, 220, 196, 0.22);
+  image-rendering: pixelated;
 }
 
-.bottom-music-nav.brown .music-icon {
-  color: #f8f5ef;
-}
-
-.bottom-music-nav.cream .music-icon {
-  color: #91713c;
-}
-
-.song-details {
+.ipod__meta {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-}
-
-.song-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.bottom-music-nav.brown .song-title {
-  color: #fff;
-}
-
-.bottom-music-nav.cream .song-title {
-  color: #795f35;
-}
-
-.song-artist {
-  font-size: 0.7rem;
-  opacity: 0.9;
-  font-style: italic;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.bottom-music-nav.brown .song-artist {
-  color: #f8f5ef;
-}
-
-.bottom-music-nav.cream .song-artist {
-  color: #91713c;
-}
-
-/* Playback Controls */
-.playback-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  flex-shrink: 0;
-}
-
-.control-btn {
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 0;
-  border: 1px solid;
+  gap: 3px;
 }
 
-.bottom-music-nav.brown .control-btn {
-  background: rgba(248, 245, 239, 0.2);
-  border-color: rgba(248, 245, 239, 0.3);
-  color: #f8f5ef;
-}
-
-.bottom-music-nav.cream .control-btn {
-  background: rgba(145, 113, 60, 0.2);
-  border-color: rgba(145, 113, 60, 0.3);
-  color: #91713c;
-}
-
-.control-btn svg {
-  width: 1rem;
-  height: 1rem;
-}
-
-.control-btn:hover:not(:disabled) {
-  transform: scale(1.1);
-}
-
-.bottom-music-nav.brown .control-btn:hover:not(:disabled) {
-  background: rgba(248, 245, 239, 0.3);
-  border-color: rgba(248, 245, 239, 0.5);
-}
-
-.bottom-music-nav.cream .control-btn:hover:not(:disabled) {
-  background: rgba(145, 113, 60, 0.3);
-  border-color: rgba(145, 113, 60, 0.5);
-}
-
-.play-btn {
-  width: 45px;
-  height: 45px;
-}
-
-.bottom-music-nav.brown .play-btn {
-  background: rgba(248, 245, 239, 0.3);
-}
-
-.bottom-music-nav.cream .play-btn {
-  background: rgba(145, 113, 60, 0.3);
-}
-
-.play-btn svg {
-  width: 1.2rem;
-  height: 1.2rem;
-}
-
-/* Progress Section */
-.progress-section {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  flex: 1;
-  max-width: 400px;
-}
-
-.time-display {
-  font-size: 0.7rem;
-  opacity: 0.9;
-  font-family: monospace;
-  min-width: 35px;
-  text-align: center;
-}
-
-.bottom-music-nav.brown .time-display {
-  color: #f8f5ef;
-}
-
-.bottom-music-nav.cream .time-display {
-  color: #91713c;
-}
-
-.progress-bar {
-  flex: 1;
-  height: 4px;
-  border-radius: 2px;
+.ipod__title,
+.ipod__artist {
+  white-space: nowrap;
   overflow: hidden;
-  cursor: pointer;
-  position: relative;
+  text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
-.bottom-music-nav.brown .progress-bar {
-  background: rgba(248, 245, 239, 0.2);
+.ipod__title {
+  font-size: 8px;
+  color: var(--lcd-fg);
 }
 
-.bottom-music-nav.cream .progress-bar {
-  background: rgba(145, 113, 60, 0.2);
+.ipod__artist {
+  font-size: 7px;
+  color: var(--lcd-accent);
+  opacity: 0.85;
 }
 
-.progress-fill {
+.ipod__time {
+  display: flex;
+  justify-content: space-between;
+  font-size: 6px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.ipod__progress {
+  height: 3px;
+  background: rgba(232, 220, 196, 0.2);
+  overflow: hidden;
+}
+
+.ipod__progress-fill {
   height: 100%;
-  border-radius: 2px;
-  transition: width 0.1s ease;
+  background: var(--lcd-accent);
+  transition: width 0.1s linear;
 }
 
-.bottom-music-nav.brown .progress-fill {
-  background: linear-gradient(90deg, #f8f5ef, #fff);
+/* Menu view */
+.ipod__menu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.bottom-music-nav.cream .progress-fill {
-  background: linear-gradient(90deg, #91713c, #795f35);
+.ipod__menu-title {
+  font-size: 7px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--lcd-bg);
+  background: var(--lcd-accent);
+  padding: 2px 4px;
+  flex-shrink: 0;
 }
 
-/* Volume Controls */
-.volume-controls {
+.ipod__menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: none;
+}
+
+.ipod__menu-list::-webkit-scrollbar {
+  display: none;
+}
+
+.ipod__menu-list button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--lcd-fg);
+  font-family: inherit;
+  font-size: 7px;
+  line-height: 1.3;
+  padding: 2.5px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.ipod__menu-list button.is-current {
+  background: var(--lcd-accent);
+  color: var(--lcd-bg);
+}
+
+/* Volume overlay (shown transiently on wheel scroll / mute) */
+.ipod__volbar {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 7%;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  min-width: 120px;
+  gap: 5px;
+  padding: 3px 5px;
+  background: rgba(14, 11, 8, 0.92);
+  border: 1px solid rgba(231, 201, 143, 0.45);
 }
 
-.volume-btn {
+.ipod__volbar-label {
+  font-size: 6px;
+  color: var(--lcd-accent);
+  flex-shrink: 0;
+}
+
+.ipod__volbar-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(232, 220, 196, 0.22);
+  overflow: hidden;
+}
+
+.ipod__volbar-track div {
+  height: 100%;
+  background: var(--lcd-accent);
+}
+
+/* ---------- Minimize control ---------- */
+.ipod__minimize {
+  position: absolute;
+  top: 3%;
+  right: 2.5%;
+  z-index: 4;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  border: none;
+  background: rgba(74, 45, 20, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease;
+}
+
+.ipod__minimize:hover {
+  background: rgba(74, 45, 20, 0.72);
+}
+
+.ipod__minimize span {
+  width: 7px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ipod-cream);
+}
+
+/* ---------- Click wheel (layered images) ----------
+   Aligned to the shell's wheel cut-out:
+     center (75.65%, 45.61%), diameter ~32% of the device width. */
+.ipod__wheel {
+  position: absolute;
+  left: 75.65%;
+  top: 45.61%;
+  width: 32.5%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  perspective: 340px;
+  touch-action: none;
+  user-select: none;
+}
+
+/* The whole cream wheel surface tilts on press (icons ride with it). */
+.ipod__wheel-surface {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.ipod__wheel-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Directional recessed shade + highlight change on press. */
+.ipod__wheel-shade {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease, background 0.12s ease;
+  mix-blend-mode: multiply;
+}
+
+.ipod__wheel-shade.is-pressed {
+  opacity: 1;
+}
+
+.ipod__wheel-shade.dir-menu {
+  background: radial-gradient(circle at 50% 8%, rgba(74, 45, 20, 0.32), rgba(74, 45, 20, 0) 52%);
+}
+.ipod__wheel-shade.dir-play {
+  background: radial-gradient(circle at 50% 92%, rgba(74, 45, 20, 0.32), rgba(74, 45, 20, 0) 52%);
+}
+.ipod__wheel-shade.dir-prev {
+  background: radial-gradient(circle at 8% 50%, rgba(74, 45, 20, 0.32), rgba(74, 45, 20, 0) 52%);
+}
+.ipod__wheel-shade.dir-next {
+  background: radial-gradient(circle at 92% 50%, rgba(74, 45, 20, 0.32), rgba(74, 45, 20, 0) 52%);
+}
+
+.ipod-slot {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.ipod-slot--menu {
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 20%;
+}
+
+.ipod-slot--prev {
+  left: 6%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20%;
+  height: 28%;
+}
+
+.ipod-slot--next {
+  right: 6%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20%;
+  height: 28%;
+}
+
+.ipod-slot--play {
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20%;
+  height: 28%;
+}
+
+/* Center is its own layer above the tilting surface. */
+.ipod-slot--center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+  height: 40%;
+  z-index: 2;
+}
+
+.ipod-ctrl {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
   padding: 0;
-  flex-shrink: 0;
-  border: 1px solid;
-}
-
-.bottom-music-nav.brown .volume-btn {
-  background: rgba(248, 245, 239, 0.2);
-  border-color: rgba(248, 245, 239, 0.3);
-  color: #f8f5ef;
-}
-
-.bottom-music-nav.cream .volume-btn {
-  background: rgba(145, 113, 60, 0.2);
-  border-color: rgba(145, 113, 60, 0.3);
-  color: #91713c;
-}
-
-.volume-btn svg {
-  width: 0.9rem;
-  height: 0.9rem;
-}
-
-.volume-btn:hover {
-  transform: scale(1.1);
-}
-
-.bottom-music-nav.brown .volume-btn:hover {
-  background: rgba(248, 245, 239, 0.3);
-  border-color: rgba(248, 245, 239, 0.5);
-}
-
-.bottom-music-nav.cream .volume-btn:hover {
-  background: rgba(145, 113, 60, 0.3);
-  border-color: rgba(145, 113, 60, 0.5);
-}
-
-.volume-slider {
-  flex: 1;
-  height: 4px;
-  border-radius: 2px;
-  outline: none;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.bottom-music-nav.brown .volume-slider {
-  background: rgba(248, 245, 239, 0.2);
-}
-
-.bottom-music-nav.cream .volume-slider {
-  background: rgba(145, 113, 60, 0.2);
-}
-
-.volume-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.bottom-music-nav.brown .volume-slider::-webkit-slider-thumb {
-  background: #f8f5ef;
-}
-
-.bottom-music-nav.cream .volume-slider::-webkit-slider-thumb {
-  background: #91713c;
-}
-
-.volume-slider::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background: transparent;
+  color: var(--ipod-wheel-text);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
-.bottom-music-nav.brown .volume-slider::-moz-range-thumb {
-  background: #f8f5ef;
+.ipod-ctrl:focus {
+  outline: none;
 }
 
-.bottom-music-nav.cream .volume-slider::-moz-range-thumb {
-  background: #91713c;
+.ipod-ctrl:focus-visible {
+  outline: 2px solid var(--ipod-gold-deep);
+  outline-offset: 3px;
+  border-radius: 5px;
 }
 
-/* Mobile responsive bottom nav */
-@media (max-width: 768px) {
-  .bottom-music-nav {
-    padding: 0.6rem 1rem;
-  }
-  
-  .music-nav-content {
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  
-  .song-info-section {
-    min-width: 150px;
-    order: 1;
-    flex: 1;
-  }
-  
-  .playback-controls {
-    order: 2;
-    flex-shrink: 0;
-  }
-  
-  .progress-section {
-    order: 3;
-    flex: 1 1 100%;
-    max-width: none;
-    margin-top: 0.5rem;
-  }
-  
-  .volume-controls {
-    order: 4;
-    min-width: 100px;
-  }
-  
-  .song-title {
-    font-size: 0.8rem;
-  }
-  
-  .song-artist {
-    font-size: 0.6rem;
-  }
-  
-  .control-btn {
-    width: 32px;
-    height: 32px;
-  }
-  
-  .control-btn svg {
-    width: 0.9rem;
-    height: 0.9rem;
-  }
-  
-  .play-btn {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .play-btn svg {
-    width: 1.1rem;
-    height: 1.1rem;
-  }
-  
-  .time-display {
-    font-size: 0.6rem;
-    min-width: 30px;
-  }
-  
-  .volume-btn {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .volume-btn svg {
-    width: 0.8rem;
-    height: 0.8rem;
+.ipod-ctrl svg {
+  width: 82%;
+  height: 82%;
+}
+
+.ipod-ctrl--menu {
+  font-family: 'BarlowSemiCondensed-Bold', sans-serif;
+  font-size: clamp(8px, 1.7vw, 11px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+/* Brown center button image + cream mute icon overlay. */
+.ipod-ctrl--center {
+  border-radius: 50%;
+  color: var(--ipod-cream);
+}
+
+.ipod__center-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  transition: filter 0.12s ease;
+}
+
+.ipod-ctrl--center:active .ipod__center-img {
+  filter: brightness(0.9);
+}
+
+.ipod__center-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46%;
+  height: 46%;
+  opacity: 0.95;
+}
+
+.ipod__center-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+}
+
+/* ---------- Minimized: floating album-art button ---------- */
+.ipod-mini {
+  width: clamp(54px, 7vw, 70px);
+  aspect-ratio: 1;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #6b5330 0%, #4a3a29 100%);
+  box-shadow: 0 12px 24px rgba(40, 28, 15, 0.42);
+}
+
+.ipod-mini__art {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(248, 245, 239, 0.85);
+}
+
+.ipod-mini__art svg {
+  width: 44%;
+  height: 44%;
+}
+
+.ipod-mini__pulse {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lcd-accent);
+  box-shadow: 0 0 0 0 rgba(231, 201, 143, 0.6);
+  animation: ipodPulse 1.6s ease-out infinite;
+}
+
+@keyframes ipodPulse {
+  0% { box-shadow: 0 0 0 0 rgba(231, 201, 143, 0.55); }
+  70% { box-shadow: 0 0 0 7px rgba(231, 201, 143, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(231, 201, 143, 0); }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .ipod-widget {
+    width: 200px;
+    right: 0.8rem;
+    bottom: 0.8rem;
   }
 }
 
-@media (max-width: 480px) {
-  .bottom-music-nav {
-    padding: 0.5rem 0.8rem;
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .ipod-ctrl,
+  .ipod__minimize,
+  .ipod__wheel-shade,
+  .ipod__center-img {
+    transition: none !important;
   }
-  
-  .music-nav-content {
-    gap: 0.8rem;
+
+  .ipod-mini__pulse {
+    animation: none !important;
   }
-  
-  .song-info-section {
-    min-width: 120px;
-  }
-  
-  .song-title {
-    font-size: 0.7rem;
-  }
-  
-  .song-artist {
-    font-size: 0.5rem;
-  }
-  
-  .control-btn {
-    width: 30px;
-    height: 30px;
-  }
-  
-  .control-btn svg {
-    width: 0.8rem;
-    height: 0.8rem;
-  }
-  
-  .play-btn {
-    width: 38px;
-    height: 38px;
-  }
-  
-  .play-btn svg {
-    width: 1rem;
-    height: 1rem;
-  }
-  
-  .volume-controls {
-    min-width: 80px;
-  }
-  
-  .volume-btn {
-    width: 26px;
-    height: 26px;
-  }
-  
-  .volume-btn svg {
-    width: 0.7rem;
-    height: 0.7rem;
-  }
-} 
+}
