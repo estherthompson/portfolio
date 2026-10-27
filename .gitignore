@@ -7,5 +7,4 @@ dist/
 build/
 
 # Local agent tooling
-.agents/
 skills-lock.json
