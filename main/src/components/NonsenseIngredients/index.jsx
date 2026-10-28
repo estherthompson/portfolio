@@ -3,11 +3,20 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import { subscribeJournalPosts } from '../../lib/journalStore';
 import './index.scss';
 
+function renderInlineText(text = '') {
+  return text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g).map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) return <strong key={index}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith('*') && part.endsWith('*')) return <em key={index}>{part.slice(1, -1)}</em>;
+    return part;
+  });
+}
+
 function StoryBlock({ block }) {
-  if (block.type === 'heading') return <h2>{block.text}</h2>;
-  if (block.type === 'quote') return <blockquote>{block.text}</blockquote>;
+  if (block.type === 'heading') return <h2>{renderInlineText(block.text)}</h2>;
+  if (block.type === 'quote') return <blockquote>{renderInlineText(block.text)}</blockquote>;
+  if (block.type === 'list') return <ul>{(block.text || '').split('\n').map((item) => item.trim()).filter(Boolean).map((item, index) => <li key={index}>{renderInlineText(item.replace(/^[-*]\s+/, ''))}</li>)}</ul>;
   if (block.type === 'image') return <figure><img src={block.image} alt={block.alt || ''} /></figure>;
-  return <p>{block.text}</p>;
+  return <p>{renderInlineText(block.text)}</p>;
 }
 
 export default function NonsenseIngredients() {

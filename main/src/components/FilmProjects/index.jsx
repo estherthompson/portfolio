@@ -50,6 +50,7 @@ const slugifyProject = (value) => value.toLowerCase().normalize('NFKD').replace(
 export { projects as filmProjects };
 
 const portraitOutline = [[0, 7], [4, 0], [96, 0], [100, 7], [100, 90], [96, 100], [0, 100]];
+const MAX_GLASS_FRAGMENTS = 24;
 const cross = (a, b) => a.x * b.y - a.y * b.x;
 const randomBetween = (min, max) => min + Math.random() * (max - min);
 
@@ -197,7 +198,7 @@ const FilmProjects = () => {
     }, 0);
     const selected = pieces[targetIndex];
     const split = splitPolygonAt(selected.polygon.map(({ x, y }) => ({ x: x * 100, y: y * 100 })), { x: clickPoint.x * 100, y: clickPoint.y * 100 });
-    if (split && pieces.length < 64) {
+    if (split && pieces.length < MAX_GLASS_FRAGMENTS) {
       const fragmentId = burst.id;
       const next = [...pieces.slice(0, targetIndex), ...split.polygons.map((polygon, index) => {
         const center = polygon.reduce((sum, vertex) => ({
@@ -219,7 +220,7 @@ const FilmProjects = () => {
         };
       }), ...pieces.slice(targetIndex + 1)];
       setGlassFragments(next);
-      setGlassCracks((current) => [...current, { ...split.crack, id: fragmentId }].slice(-64));
+      setGlassCracks((current) => [...current, { ...split.crack, id: fragmentId }].slice(-MAX_GLASS_FRAGMENTS));
     }
     setComicBurst(burst);
     window.clearTimeout(burstTimerRef.current);

@@ -58,6 +58,10 @@
 .journal-block__bar button:disabled { opacity: .35; cursor: default; }
 .journal-block__bar button:focus-visible,.journal-add-blocks button:focus-visible,.journal-publish:focus-visible { outline: 2px solid #657a57; outline-offset: 2px; }
 .journal-block textarea { display: block; }
+.journal-format-tools { display: flex; align-items: center; gap: .35rem; margin: .15rem 0 .45rem; }
+.journal-format-tools button { width: 2rem; height: 2rem; border: 1px solid rgba(51,42,41,.15); border-radius: .4rem; background: rgba(255,253,248,.9); color: var(--desk-ink); cursor: pointer; font: inherit; }
+.journal-format-tools button:hover { background: #eee8dd; }
+.journal-format-tools span { margin-left: .35rem; color: var(--desk-muted); font-size: .78rem; }
 .journal-block__image { position: relative; min-height: 140px; display: grid; place-items: center; overflow: hidden; border: 1px dashed rgba(51,42,41,.28); border-radius: .5rem; color: var(--desk-muted); }
 .journal-block__image > img { width: 100%; max-height: 360px; object-fit: cover; }
 .journal-block__alt { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; box-sizing: border-box; padding: .5rem .7rem; border: 0; background: rgba(255,253,248,.92); color: var(--desk-ink); }

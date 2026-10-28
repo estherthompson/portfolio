@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
@@ -38,6 +38,23 @@ function prepareImage(file) {
 
 const initialBlock = () => ({ id: createId(), type: 'paragraph', text: '' });
 
+function htmlToStoryText(html) {
+  const documentNode = new DOMParser().parseFromString(html, 'text/html');
+  const convert = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) return node.textContent;
+    if (node.nodeType !== Node.ELEMENT_NODE) return '';
+    const tag = node.tagName.toLowerCase();
+    const content = [...node.childNodes].map(convert).join('');
+    if (tag === 'br') return '\n';
+    if (tag === 'strong' || tag === 'b' || (tag === 'span' && /font-weight:\s*(bold|[6-9]00)/i.test(node.getAttribute('style') || ''))) return `**${content}**`;
+    if (tag === 'em' || tag === 'i' || (tag === 'span' && /font-style:\s*italic/i.test(node.getAttribute('style') || ''))) return `*${content}*`;
+    if (tag === 'li') return `- ${content.trim()}\n`;
+    if (tag === 'p' || tag === 'div') return `${content.trim()}\n`;
+    return content;
+  };
+  return [...documentNode.body.childNodes].map(convert).join('').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
 const toDateInputValue = (value) => {
   const date = value ? new Date(value) : new Date();
   if (Number.isNaN(date.getTime())) return '';
@@ -75,6 +92,7 @@ export default function JournalAdmin() {
   const [notice, setNotice] = useState('');
   const [savingImage, setSavingImage] = useState(false);
   const [editingPostId, setEditingPostId] = useState(null);
+  const activeStoryTextarea = useRef(null);
 
   useEffect(() => onAuthStateChanged(auth, async (currentUser) => {
     setUser(currentUser);
@@ -158,6 +176,52 @@ export default function JournalAdmin() {
   };
 
   const updateBlock = (id, changes) => setBlocks((items) => items.map((item) => item.id === id ? { ...item, ...changes } : item));
+
+  const formatSelection = (block, marker) => {
+    const textarea = activeStoryTextarea.current;
+    const text = block.text || '';
+    const start = textarea?.selectionStart ?? text.length;
+    const end = textarea?.selectionEnd ?? text.length;
+    const selected = text.slice(start, end);
+    const replacement = selected ? `${marker}${selected}${marker}` : `${marker}text${marker}`;
+    const nextText = `${text.slice(0, start)}${replacement}${text.slice(end)}`;
+    updateBlock(block.id, { text: nextText });
+    requestAnimationFrame(() => {
+      textarea?.focus();
+      const cursor = selected ? start + replacement.length : start + marker.length;
+      textarea?.setSelectionRange(cursor, selected ? cursor : cursor + 4);
+    });
+  };
+
+  const handleStoryPaste = (event, block) => {
+    const html = event.clipboardData?.getData('text/html');
+    if (!html) return;
+    const pastedText = htmlToStoryText(html);
+    if (!pastedText) return;
+    event.preventDefault();
+    const textarea = event.currentTarget;
+    const currentText = block.text || '';
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    updateBlock(block.id, {
+      text: `${currentText.slice(0, start)}${pastedText}${currentText.slice(end)}`,
+      ...(block.type === 'paragraph' && /<\s*(ul|ol)\b/i.test(html) ? { type: 'list' } : {}),
+    });
+    requestAnimationFrame(() => {
+      textarea.focus();
+      const cursor = start + pastedText.length;
+      textarea.setSelectionRange(cursor, cursor);
+    });
+  };
+
+  const handleStoryShortcut = (event, block) => {
+    if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+    const key = event.key.toLowerCase();
+    if (key === 'b' || key === 'i') {
+      event.preventDefault();
+      formatSelection(block, key === 'b' ? '**' : '*');
+    }
+  };
 
   const uploadImage = async (file, onReady) => {
     setError('');
@@ -276,12 +340,15 @@ export default function JournalAdmin() {
           <div className="journal-blocks">
             {blocks.map((block, index) => (
               <section className="journal-block" key={block.id}>
-                <div className="journal-block__bar"><span>{String(index + 1).padStart(2, '0')} · {block.type === 'paragraph' ? 'Paragraph' : block.type === 'heading' ? 'Heading' : block.type === 'quote' ? 'Pull quote' : 'Image'}</span><div><button type="button" aria-label="Move block up" disabled={index === 0} onClick={() => setBlocks((items) => { const next = [...items]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; return next; })}>↑</button><button type="button" aria-label="Move block down" disabled={index === blocks.length - 1} onClick={() => setBlocks((items) => { const next = [...items]; [next[index + 1], next[index]] = [next[index], next[index + 1]]; return next; })}>↓</button><button type="button" aria-label="Remove block" onClick={() => setBlocks((items) => items.filter((item) => item.id !== block.id))}>×</button></div></div>
-                {block.type === 'image' ? <label className="journal-block__image">{block.image ? <img src={block.image} alt={block.alt || ''} /> : <span>Choose an image for this part of the story</span>}<input type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadImage(file, (image) => updateBlock(block.id, { image })); }} /><input className="journal-block__alt" value={block.alt || ''} onChange={(event) => updateBlock(block.id, { alt: event.target.value })} placeholder="Describe the image (optional)" aria-label="Image description" /></label> : <textarea value={block.text} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder={block.type === 'heading' ? 'Section heading' : block.type === 'quote' ? 'A line worth lingering over' : 'Write a paragraph…'} rows={block.type === 'heading' ? 2 : 4} />}
+                <div className="journal-block__bar"><span>{String(index + 1).padStart(2, '0')} · {block.type === 'paragraph' ? 'Paragraph' : block.type === 'heading' ? 'Heading' : block.type === 'quote' ? 'Pull quote' : block.type === 'list' ? 'Bulleted list' : 'Image'}</span><div><button type="button" aria-label="Move block up" disabled={index === 0} onClick={() => setBlocks((items) => { const next = [...items]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; return next; })}>↑</button><button type="button" aria-label="Move block down" disabled={index === blocks.length - 1} onClick={() => setBlocks((items) => { const next = [...items]; [next[index + 1], next[index]] = [next[index], next[index + 1]]; return next; })}>↓</button><button type="button" aria-label="Remove block" onClick={() => setBlocks((items) => items.filter((item) => item.id !== block.id))}>×</button></div></div>
+                {block.type === 'image' ? <label className="journal-block__image">{block.image ? <img src={block.image} alt={block.alt || ''} /> : <span>Choose an image for this part of the story</span>}<input type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadImage(file, (image) => updateBlock(block.id, { image })); }} /><input className="journal-block__alt" value={block.alt || ''} onChange={(event) => updateBlock(block.id, { alt: event.target.value })} placeholder="Describe the image (optional)" aria-label="Image description" /></label> : <>
+                  {block.type !== 'list' && <div className="journal-format-tools" aria-label="Text formatting"><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatSelection(block, '**')} aria-label="Bold"><strong>B</strong></button><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatSelection(block, '*')} aria-label="Italic"><em>I</em></button><span>Select text, then choose a style.</span></div>}
+                  <textarea ref={(element) => { if (element && document.activeElement === element) activeStoryTextarea.current = element; }} onFocus={(event) => { activeStoryTextarea.current = event.currentTarget; }} onPaste={(event) => handleStoryPaste(event, block)} onKeyDown={(event) => handleStoryShortcut(event, block)} value={block.text} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder={block.type === 'heading' ? 'Section heading' : block.type === 'quote' ? 'A line worth lingering over' : block.type === 'list' ? 'One list item per line' : 'Write a paragraph…'} rows={block.type === 'heading' ? 2 : 4} />
+                </>}
               </section>
             ))}
           </div>
-          <div className="journal-add-blocks"><span>Add to story</span>{[['paragraph', 'Paragraph'], ['heading', 'Heading'], ['quote', 'Pull quote'], ['image', 'Image']].map(([type, label]) => <button type="button" key={type} onClick={() => setBlocks((items) => [...items, { id: createId(), type, text: '', image: '', alt: '' }])}>＋ {label}</button>)}</div>
+          <div className="journal-add-blocks"><span>Add to story</span>{[['paragraph', 'Paragraph'], ['heading', 'Heading'], ['quote', 'Pull quote'], ['list', 'Bulleted list'], ['image', 'Image']].map(([type, label]) => <button type="button" key={type} onClick={() => setBlocks((items) => [...items, { id: createId(), type, text: '', image: '', alt: '' }])}>＋ {label}</button>)}</div>
           {error && <p className="journal-form-message journal-form-message--error" role="alert">{error}</p>}
           {notice && <p className="journal-form-message" role="status">{notice}</p>}
           {editingPostId && <button className="journal-cancel-edit" type="button" onClick={() => { resetEditor(); setError(''); setNotice('Editing cancelled.'); }}>Cancel editing</button>}
