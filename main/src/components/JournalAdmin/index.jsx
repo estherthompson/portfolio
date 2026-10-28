@@ -315,14 +315,16 @@ export default function JournalAdmin() {
     <main className="journal-admin">
       <header className="journal-admin__top">
         <Link to="/film-projects" className="journal-admin__brand">nonsense<span>&</span>ingredients</Link>
-        <Link to="/film-projects" className="journal-admin__return">← View Film Projects</Link>
+        <nav className="journal-admin__top-actions" aria-label="Admin actions">
+          <Link to="/film-projects" className="journal-admin__return">← View Film Projects</Link>
+          <button className="journal-admin__return journal-admin__sign-out" type="button" onClick={() => signOut(auth)}>Sign out</button>
+        </nav>
       </header>
       <div className="journal-admin__layout">
         <section className="journal-admin__intro">
           <p className="journal-admin__eyebrow">THE WRITING DESK</p>
           <h1>Make a little<br /><em>room for a story.</em></h1>
           <p>Write the post, add images and headings, then publish it to the cards on Film Projects.</p>
-          <div className="journal-admin__storage-note"><strong>Connected to Firestore</strong><span>Published stories are shared with visitors and available across your devices. Signed in as {user.email}.</span><button type="button" onClick={() => signOut(auth)}>Sign out</button></div>
         </section>
 
         <form className="journal-editor" onSubmit={handlePublish}>

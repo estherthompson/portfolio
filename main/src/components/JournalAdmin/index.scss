@@ -23,6 +23,8 @@
 .journal-admin__brand span { color: #8e6c5b; font-style: italic; }
 .journal-admin__return { color: var(--desk-muted); text-decoration: none; }
 .journal-admin__return:hover { color: var(--desk-ink); }
+.journal-admin__top-actions { display: flex; align-items: center; gap: 1.25rem; }
+.journal-admin__sign-out { padding: 0; border: 0; background: none; font: inherit; cursor: pointer; }
 
 .journal-admin__layout { max-width: 1320px; margin: 0 auto; padding: 3rem clamp(1rem, 5vw, 4.5rem); display: grid; grid-template-columns: minmax(230px, .65fr) minmax(0, 1.35fr); gap: 2rem 4rem; align-items: start; }
 .journal-admin__intro { position: sticky; top: 2rem; padding-top: 1rem; }
