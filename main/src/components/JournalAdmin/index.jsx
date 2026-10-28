@@ -48,7 +48,7 @@ function PreviewText({ text = '' }) {
 }
 
 function PreviewBlock({ block }) {
-  if (block.type === 'heading') return <h3><PreviewText text={block.text} /></h3>;
+  if (block.type === 'heading') return <h2><PreviewText text={block.text} /></h2>;
   if (block.type === 'quote') return <blockquote><PreviewText text={block.text} /></blockquote>;
   if (block.type === 'list') return <ul>{(block.text || '').split('\n').map((item) => item.trim()).filter(Boolean).map((item, index) => <li key={index}><PreviewText text={item.replace(/^[-*]\s+/, '')} /></li>)}</ul>;
   if (block.type === 'image') return block.image ? <figure><img src={block.image} alt={block.alt || ''} /></figure> : null;
@@ -66,10 +66,62 @@ function htmlToStoryText(html) {
     if (tag === 'strong' || tag === 'b' || (tag === 'span' && /font-weight:\s*(bold|[6-9]00)/i.test(node.getAttribute('style') || ''))) return `**${content}**`;
     if (tag === 'em' || tag === 'i' || (tag === 'span' && /font-style:\s*italic/i.test(node.getAttribute('style') || ''))) return `*${content}*`;
     if (tag === 'li') return `- ${content.trim()}\n`;
-    if (tag === 'p' || tag === 'div') return `${content.trim()}\n`;
+    if (tag === 'p' || tag === 'div') return `${content.replace(/\n+$/, '')}\n`;
     return content;
   };
-  return [...documentNode.body.childNodes].map(convert).join('').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  return [...documentNode.body.childNodes].map(convert).join('').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').replace(/^\n+|\n+$/g, '');
+}
+
+function markdownToEditorHtml(text = '', type = 'paragraph') {
+  const inline = (value) => value
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  if (type === 'list') {
+    const items = text.split('\n').map((item) => item.trim()).filter(Boolean)
+      .map((item) => `<li>${inline(item.replace(/^[-*]\s+/, ''))}</li>`).join('');
+    return items ? `<ul>${items}</ul>` : '<div><br></div>';
+  }
+  return text.split('\n').map((line) => `<div>${inline(line) || '<br>'}</div>`).join('') || '<div><br></div>';
+}
+
+function RichStoryEditor({ block, editorRef, onChange }) {
+  const elementRef = useRef(null);
+  const lastSavedText = useRef(null);
+  useEffect(() => {
+    if (!elementRef.current || lastSavedText.current === block.text) return;
+    elementRef.current.innerHTML = markdownToEditorHtml(block.text, block.type);
+    lastSavedText.current = block.text;
+  }, [block.id, block.text, block.type]);
+
+  const sync = () => {
+    const element = elementRef.current;
+    if (!element) return;
+    const text = htmlToStoryText(element.innerHTML);
+    lastSavedText.current = text;
+    onChange(text, Boolean(element.querySelector('ul,ol')));
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key !== 'Tab') return;
+    event.preventDefault();
+    document.execCommand('insertText', false, '\u00a0\u00a0\u00a0\u00a0');
+    sync();
+  };
+
+  return <div
+    ref={(element) => { elementRef.current = element; if (element && document.activeElement === element) editorRef.current = element; }}
+    className="journal-rich-editor"
+    contentEditable
+    suppressContentEditableWarning
+    role="textbox"
+    aria-multiline="true"
+    data-placeholder={block.type === 'heading' ? 'Section heading' : block.type === 'quote' ? 'A line worth lingering over' : block.type === 'list' ? 'One list item per line' : 'Write your story…'}
+    onFocus={(event) => { editorRef.current = event.currentTarget; }}
+    onInput={sync}
+    onKeyDown={handleKeyDown}
+    onBlur={sync}
+  />;
 }
 
 const toDateInputValue = (value) => {
@@ -196,49 +248,12 @@ export default function JournalAdmin() {
   const updateBlock = (id, changes) => setBlocks((items) => items.map((item) => item.id === id ? { ...item, ...changes } : item));
 
   const formatSelection = (block, marker) => {
-    const textarea = activeStoryTextarea.current;
-    const text = block.text || '';
-    const start = textarea?.selectionStart ?? text.length;
-    const end = textarea?.selectionEnd ?? text.length;
-    const selected = text.slice(start, end);
-    const replacement = selected ? `${marker}${selected}${marker}` : `${marker}text${marker}`;
-    const nextText = `${text.slice(0, start)}${replacement}${text.slice(end)}`;
-    updateBlock(block.id, { text: nextText });
-    requestAnimationFrame(() => {
-      textarea?.focus();
-      const cursor = selected ? start + replacement.length : start + marker.length;
-      textarea?.setSelectionRange(cursor, selected ? cursor : cursor + 4);
-    });
-  };
-
-  const handleStoryPaste = (event, block) => {
-    const html = event.clipboardData?.getData('text/html');
-    if (!html) return;
-    const pastedText = htmlToStoryText(html);
-    if (!pastedText) return;
-    event.preventDefault();
-    const textarea = event.currentTarget;
-    const currentText = block.text || '';
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    updateBlock(block.id, {
-      text: `${currentText.slice(0, start)}${pastedText}${currentText.slice(end)}`,
-      ...(block.type === 'paragraph' && /<\s*(ul|ol)\b/i.test(html) ? { type: 'list' } : {}),
-    });
-    requestAnimationFrame(() => {
-      textarea.focus();
-      const cursor = start + pastedText.length;
-      textarea.setSelectionRange(cursor, cursor);
-    });
-  };
-
-  const handleStoryShortcut = (event, block) => {
-    if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
-    const key = event.key.toLowerCase();
-    if (key === 'b' || key === 'i') {
-      event.preventDefault();
-      formatSelection(block, key === 'b' ? '**' : '*');
-    }
+    const editor = activeStoryTextarea.current;
+    if (!editor) return;
+    editor.focus();
+    document.execCommand(marker === '**' ? 'bold' : 'italic');
+    const text = htmlToStoryText(editor.innerHTML);
+    updateBlock(block.id, { text });
   };
 
   const uploadImage = async (file, onReady) => {
@@ -339,11 +354,17 @@ export default function JournalAdmin() {
         </nav>
       </header>
       <div className="journal-admin__layout">
-        <section className="journal-admin__intro">
-          <p className="journal-admin__eyebrow">THE WRITING DESK</p>
-          <h1>Make a little<br /><em>room for a story.</em></h1>
-          <p>Write the post, add images and headings, then publish it to the cards on Film Projects.</p>
-        </section>
+        <aside className="journal-admin__sidebar">
+          <section className="journal-admin__intro">
+            <p className="journal-admin__eyebrow">THE WRITING DESK</p>
+            <h1>Make a little<br /><em>room for a story.</em></h1>
+            <p>Write the post, add images and headings, then publish it to the cards on Film Projects.</p>
+          </section>
+          <section className="journal-admin__posts"><div className="journal-blocks-heading"><div><span className="journal-admin__eyebrow">YOUR STORIES</span><h2>Published here</h2></div><span>{posts.length} {posts.length === 1 ? 'story' : 'stories'}</span></div>
+            {localPostCount > 0 && <div className="journal-import-note"><p>{localPostCount} {localPostCount === 1 ? 'story is' : 'stories are'} still saved only in this browser.</p><button type="button" onClick={handleMigration} disabled={migrating}>{migrating ? 'Importing…' : 'Import browser stories to Firestore'}</button></div>}
+            {posts.length ? <ul>{posts.map((post) => <li key={post.id}><img src={post.cover} alt="" /><div><strong>{post.title}</strong><span>{post.category} · {new Date(post.date).toLocaleDateString()}</span></div><div className="journal-post-actions"><button type="button" onClick={() => startEditing(post)} aria-label={`Edit ${post.title}`}>Edit</button><button type="button" onClick={() => deletePost(post.id)} aria-label={`Delete ${post.title}`}>Remove</button></div></li>)}</ul> : <p>No stories yet. The first one can be yours.</p>}
+          </section>
+        </aside>
 
         <form className="journal-editor" onSubmit={handlePublish}>
           <div className="journal-editor__form-head"><div><span className="journal-admin__eyebrow">{editingPostId ? 'EDITING STORY' : 'NEW STORY'}</span><h2>{editingPostId ? 'Update the details' : 'Start with the details'}</h2></div><span className="journal-editor__draft-dot">● Draft</span></div>
@@ -362,32 +383,30 @@ export default function JournalAdmin() {
               <section className="journal-block" key={block.id}>
                 <div className="journal-block__bar"><span>{String(index + 1).padStart(2, '0')} · {block.type === 'paragraph' ? 'Paragraph' : block.type === 'heading' ? 'Heading' : block.type === 'quote' ? 'Pull quote' : block.type === 'list' ? 'Bulleted list' : 'Image'}</span><div><button type="button" aria-label="Move block up" disabled={index === 0} onClick={() => setBlocks((items) => { const next = [...items]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; return next; })}>↑</button><button type="button" aria-label="Move block down" disabled={index === blocks.length - 1} onClick={() => setBlocks((items) => { const next = [...items]; [next[index + 1], next[index]] = [next[index], next[index + 1]]; return next; })}>↓</button><button type="button" aria-label="Remove block" onClick={() => setBlocks((items) => items.filter((item) => item.id !== block.id))}>×</button></div></div>
                 {block.type === 'image' ? <label className="journal-block__image">{block.image ? <img src={block.image} alt={block.alt || ''} /> : <span>Choose an image for this part of the story</span>}<input type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadImage(file, (image) => updateBlock(block.id, { image })); }} /><input className="journal-block__alt" value={block.alt || ''} onChange={(event) => updateBlock(block.id, { alt: event.target.value })} placeholder="Describe the image (optional)" aria-label="Image description" /></label> : <>
-                  {block.type !== 'list' && <div className="journal-format-tools" aria-label="Text formatting"><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatSelection(block, '**')} aria-label="Bold"><strong>B</strong></button><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatSelection(block, '*')} aria-label="Italic"><em>I</em></button><span>Select text, then choose a style.</span></div>}
-                  <textarea ref={(element) => { if (element && document.activeElement === element) activeStoryTextarea.current = element; }} onFocus={(event) => { activeStoryTextarea.current = event.currentTarget; }} onPaste={(event) => handleStoryPaste(event, block)} onKeyDown={(event) => handleStoryShortcut(event, block)} value={block.text} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder={block.type === 'heading' ? 'Section heading' : block.type === 'quote' ? 'A line worth lingering over' : block.type === 'list' ? 'One list item per line' : 'Write a paragraph…'} rows={block.type === 'heading' ? 2 : 4} />
+                  <div className="journal-format-tools" aria-label="Text formatting"><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatSelection(block, '**')} aria-label="Bold"><strong>B</strong></button><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatSelection(block, '*')} aria-label="Italic"><em>I</em></button><span>Select text and use Cmd/Ctrl+B or Cmd/Ctrl+I. Tab indents.</span></div>
+                  <RichStoryEditor block={block} editorRef={activeStoryTextarea} onChange={(text, hasList) => updateBlock(block.id, { text, ...(hasList && block.type === 'paragraph' ? { type: 'list' } : {}) })} />
                 </>}
               </section>
             ))}
           </div>
           <div className="journal-add-blocks"><span>Add to story</span>{[['paragraph', 'Paragraph'], ['heading', 'Heading'], ['quote', 'Pull quote'], ['list', 'Bulleted list'], ['image', 'Image']].map(([type, label]) => <button type="button" key={type} onClick={() => setBlocks((items) => [...items, { id: createId(), type, text: '', image: '', alt: '' }])}>＋ {label}</button>)}</div>
           <button className="journal-preview-toggle" type="button" onClick={() => setShowPreview((visible) => !visible)}>{showPreview ? 'Hide preview' : 'Preview post'}</button>
-          {showPreview && <article className="journal-live-preview">
-            {cover && <img className="journal-live-preview__cover" src={cover} alt="" />}
-            <span className="journal-admin__eyebrow">{category || 'UNTAGGED'} · {publishDate || 'NO DATE'}</span>
-            <h2>{title || 'Your story title'}</h2>
-            {excerpt && <p className="journal-live-preview__excerpt">{excerpt}</p>}
-            <p className="journal-live-preview__byline">By {author || 'Esther Thompson'}</p>
-            <div className="journal-live-preview__body">{blocks.map((block) => <PreviewBlock key={block.id} block={block} />)}</div>
-          </article>}
+          {showPreview && <div className="journal-live-preview"><article className="ni-article">
+            <div className="ni-article-heading">
+              <span className="ni-eyebrow">{category || 'UNTAGGED'} · {publishDate || 'NO DATE'}</span>
+              <h1>{title || 'Your story title'}</h1>
+              <p className="ni-article-deck">{excerpt}</p>
+              <div className="ni-byline">By {author || 'Esther Thompson'} <span>·</span> {publishDate || 'No date'}</div>
+            </div>
+            {cover && <img className="ni-article-cover" src={cover} alt="" />}
+            <div className="ni-prose">{blocks.map((block) => <PreviewBlock key={block.id} block={block} />)}</div>
+          </article></div>}
           {error && <p className="journal-form-message journal-form-message--error" role="alert">{error}</p>}
           {notice && <p className="journal-form-message" role="status">{notice}</p>}
           {editingPostId && <button className="journal-cancel-edit" type="button" onClick={() => { resetEditor(); setError(''); setNotice('Editing cancelled.'); }}>Cancel editing</button>}
           <button className="journal-publish" type="submit" disabled={savingImage}>{savingImage ? 'Preparing image…' : editingPostId ? 'Save changes' : 'Publish story'}</button>
         </form>
 
-        <section className="journal-admin__posts"><div className="journal-blocks-heading"><div><span className="journal-admin__eyebrow">YOUR STORIES</span><h2>Published here</h2></div><span>{posts.length} {posts.length === 1 ? 'story' : 'stories'}</span></div>
-          {localPostCount > 0 && <div className="journal-import-note"><p>{localPostCount} {localPostCount === 1 ? 'story is' : 'stories are'} still saved only in this browser.</p><button type="button" onClick={handleMigration} disabled={migrating}>{migrating ? 'Importing…' : 'Import browser stories to Firestore'}</button></div>}
-          {posts.length ? <ul>{posts.map((post) => <li key={post.id}><img src={post.cover} alt="" /><div><strong>{post.title}</strong><span>{post.category} · {new Date(post.date).toLocaleDateString()}</span></div><div className="journal-post-actions"><button type="button" onClick={() => startEditing(post)} aria-label={`Edit ${post.title}`}>Edit</button><button type="button" onClick={() => deletePost(post.id)} aria-label={`Delete ${post.title}`}>Remove</button></div></li>)}</ul> : <p>No stories yet. The first one can be yours.</p>}
-        </section>
       </div>
     </main>
   );
