@@ -1532,3 +1532,41 @@
     object-position: center;
   }
 }
+
+/* Archive heading alignment and star */
+.archive-heading-copy {
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.archive-heading-copy h2,
+.archive-heading-copy p {
+  text-align: left;
+}
+
+.red-star {
+  display: inline-block;
+  width: 0.65em;
+  height: 0.65em;
+  margin-left: 0.12em;
+  color: #c90d17;
+  vertical-align: 0.08em;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .film-journal-heading {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .archive-heading-copy {
+    width: 100%;
+    flex: none;
+  }
+
+  .journal-volume {
+    text-align: left;
+  }
+}

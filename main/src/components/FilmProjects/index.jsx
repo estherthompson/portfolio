@@ -368,11 +368,28 @@ const FilmProjects = () => {
 
       <section className="archive-projects film-journal" id="archive" aria-labelledby="archive-title">
         <div className="archive-section-heading film-journal-heading">
-          <div>
-            <h2 id="archive-title">The Archive<span className="red-star"> ✳</span></h2>
+          <div className="archive-heading-copy">
+            <h2 id="archive-title">
+              The Archive
+              <svg
+                className="red-star"
+                viewBox="0 0 100 100"
+                aria-hidden="true"
+              >
+                <path
+                  d="M50 0 L61 35 L96 15 L75 43 L100 50 L75 57 L96 85 L61 65 L50 100 L39 65 L4 85 L25 57 L0 50 L25 43 L4 15 L39 35 Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </h2>
+
             <p>Film projects and notes from the archive, collected together.</p>
           </div>
-          <span className="journal-volume">PERSONAL FILES<br />N&amp;I — 001—∞</span>
+
+          <span className="journal-volume">
+            PERSONAL FILES<br />
+            N&amp;I — 001—∞
+          </span>
         </div>
 
         <div className="journal-toolbar" aria-label="Filter the archive">
