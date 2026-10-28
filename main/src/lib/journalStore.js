@@ -6,12 +6,13 @@ const LEGACY_STORAGE_KEY = 'nonsense-ingredients-posts-legacy-backup-v1';
 const REMOTE_READY_KEY = 'nonsense-ingredients-firestore-ready-v1';
 const LEGACY_MIGRATED_KEY = 'nonsense-ingredients-legacy-migrated-v1';
 const POSTS_COLLECTION = 'journalPosts';
+const isPublishedPost = (post) => post.status !== 'draft';
 
 function readLocalPosts() {
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY);
     const posts = saved ? JSON.parse(saved) : [];
-    return Array.isArray(posts) ? posts.sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
+    return Array.isArray(posts) ? posts.sort((a, b) => new Date(b.updatedAt || b.date || 0) - new Date(a.updatedAt || a.date || 0)) : [];
   } catch {
     return [];
   }
@@ -47,7 +48,7 @@ function syncRemotePosts(posts) {
   const localPosts = legacyPending ? readLegacyPosts() : [];
   const remoteIds = new Set(posts.map((post) => post.id));
   const visiblePosts = [...posts, ...localPosts.filter((post) => !remoteIds.has(post.id))]
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+    .sort((a, b) => new Date(b.updatedAt || b.date || 0) - new Date(a.updatedAt || a.date || 0));
   if (posts.length || !localPosts.length || remoteReady) {
     cachePosts(posts);
     if (posts.length || !localPosts.length) window.localStorage.setItem(REMOTE_READY_KEY, 'true');
@@ -71,7 +72,20 @@ export function subscribeJournalPosts(onPosts, onError = () => {}) {
     query(collection(db, POSTS_COLLECTION), orderBy('date', 'desc')),
     (snapshot) => {
       const posts = snapshot.docs.map((postDoc) => ({ id: postDoc.id, ...postDoc.data() }));
-      onPosts(syncRemotePosts(posts));
+      onPosts(syncRemotePosts(posts).filter(isPublishedPost));
+    },
+    (error) => {
+      onPosts(readLocalPosts().filter(isPublishedPost));
+      onError(error);
+    },
+  );
+}
+
+export function subscribeAdminJournalPosts(onPosts, onError = () => {}) {
+  return onSnapshot(
+    query(collection(db, POSTS_COLLECTION), orderBy('date', 'desc')),
+    (snapshot) => {
+      onPosts(syncRemotePosts(snapshot.docs.map((postDoc) => ({ id: postDoc.id, ...postDoc.data() }))));
     },
     (error) => {
       onPosts(readLocalPosts());
@@ -86,13 +100,14 @@ export async function isJournalAdmin(user = auth.currentUser) {
 
 export async function saveJournalPost(post) {
   if (!auth.currentUser || !(await isJournalAdmin(auth.currentUser))) {
-    throw new Error('Only the signed-in journal admin can publish stories.');
+    throw new Error('Only the signed-in journal admin can save stories.');
   }
   if (new TextEncoder().encode(JSON.stringify(post)).length > 700 * 1024) {
     throw new Error('This story is too large for Firestore. Reduce the size or number of its images and try again.');
   }
   await setDoc(doc(db, POSTS_COLLECTION, post.id), post);
-  const next = [post, ...readLocalPosts().filter((item) => item.id !== post.id)];
+  const next = [post, ...readLocalPosts().filter((item) => item.id !== post.id)]
+    .sort((a, b) => new Date(b.updatedAt || b.date || 0) - new Date(a.updatedAt || a.date || 0));
   cachePosts(next);
   return next;
 }

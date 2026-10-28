@@ -28,6 +28,11 @@
 .ni-prose blockquote { margin:2rem 0; padding:.3rem 0 .3rem 1.35rem; border-left:3px solid #a9b99a; color:#806958; font:italic 1.65rem/1.45 'Migra-Extralight',serif; }
 .ni-prose figure { margin:2.2rem 0; }
 .ni-prose figure img { display:block; width:100%; max-height:520px; object-fit:cover; border-radius:.8rem; }
+.ni-prose figure video { display:block; width:100%; max-height:70vh; border-radius:.8rem; background:#080808; }
+.ni-video-embed { position:relative; width:100%; aspect-ratio:16/9; }
+.ni-video-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:.8rem; }
+.ni-pdf-embed iframe { display:block; width:100%; height:min(75vh, 900px); border:0; border-radius:.8rem; background:#fff; }
+.ni-pdf-embed a { display:inline-block; margin-top:.7rem; color:var(--ni-muted); }
 .ni-prose figcaption { padding-top:.5rem; color:var(--ni-muted); font-size:.9rem; }
 .ni-bottom-back { display:inline-block; margin-top:1rem; }
 .ni-footer { display:flex; align-items:center; justify-content:space-between; gap:1rem; border-top:1px solid rgba(53,43,40,.18); padding:1.5rem 0; color:var(--ni-muted); font-size:.9rem; }

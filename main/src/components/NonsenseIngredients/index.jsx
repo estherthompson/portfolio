@@ -11,11 +11,29 @@ function renderInlineText(text = '') {
   });
 }
 
+function youtubeEmbedUrl(value = '') {
+  try {
+    const url = new URL(value.trim());
+    const host = url.hostname.replace(/^www\./, '');
+    let videoId = '';
+    if (host === 'youtu.be') videoId = url.pathname.slice(1).split('/')[0];
+    if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
+      videoId = url.searchParams.get('v') || url.pathname.match(/^\/(?:embed|shorts)\/([^/]+)/)?.[1] || '';
+    }
+    return /^[\w-]{11}$/.test(videoId) ? `https://www.youtube-nocookie.com/embed/${videoId}` : '';
+  } catch {
+    return '';
+  }
+}
+
 function StoryBlock({ block }) {
   if (block.type === 'heading') return <h2>{renderInlineText(block.text)}</h2>;
   if (block.type === 'quote') return <blockquote>{renderInlineText(block.text)}</blockquote>;
   if (block.type === 'list') return <ul>{(block.text || '').split('\n').map((item) => item.trim()).filter(Boolean).map((item, index) => <li key={index}>{renderInlineText(item.replace(/^[-*]\s+/, ''))}</li>)}</ul>;
   if (block.type === 'image') return <figure><img src={block.image} alt={block.alt || ''} /></figure>;
+  if (block.type === 'video') return <figure><video controls preload="metadata" src={block.url}>Your browser does not support video playback.</video></figure>;
+  if (block.type === 'youtube') return youtubeEmbedUrl(block.url) ? <figure className="ni-video-embed"><iframe src={youtubeEmbedUrl(block.url)} title={block.title || 'YouTube video'} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen /></figure> : null;
+  if (block.type === 'pdf') return <figure className="ni-pdf-embed"><iframe src={block.url} title={block.title || 'PDF document'} /><a href={block.url} target="_blank" rel="noreferrer">Open PDF in a new tab</a></figure>;
   return <p>{renderInlineText(block.text)}</p>;
 }
 

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
-import { getJournalPosts, getLocalJournalPostCount, isJournalAdmin, migrateLocalJournalPosts, removeJournalPost, saveJournalPost, slugify, subscribeJournalPosts } from '../../lib/journalStore';
+import { getJournalPosts, getLocalJournalPostCount, isJournalAdmin, migrateLocalJournalPosts, removeJournalPost, saveJournalPost, slugify, subscribeAdminJournalPosts } from '../../lib/journalStore';
 import './index.scss';
 
 const createId = () => (window.crypto?.randomUUID ? window.crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -28,7 +28,7 @@ function prepareImage(file) {
         canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
         canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
         canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/webp', 0.82));
+        canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('The image could not be prepared.')), 'image/webp', 0.82);
       };
       image.src = reader.result;
     };
@@ -36,8 +36,48 @@ function prepareImage(file) {
   });
 }
 
+async function uploadJournalAsset(file, fileName, resourceType) {
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME?.trim() || 'mn3mn8zk';
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET?.trim() || 'portfolio_assets';
+  if (!cloudName || !uploadPreset) {
+    throw new Error('Cloudinary is not configured. Check the cloud name and unsigned upload preset.');
+  }
+  const formData = new FormData();
+  formData.append('file', file, fileName);
+  formData.append('upload_preset', uploadPreset);
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/${resourceType}/upload`, {
+    method: 'POST',
+    body: formData,
+  });
+  const result = await response.json();
+  if (!response.ok || !result.secure_url) {
+    throw new Error(result.error?.message || 'Cloudinary could not upload this file. Check the cloud name, preset, and allowed formats.');
+  }
+  return result.secure_url;
+}
+
+async function uploadEmbeddedImage(dataUrl, name) {
+  const blob = await (await fetch(dataUrl)).blob();
+  return uploadJournalAsset(blob, name, 'image');
+}
+
 const initialBlock = () => ({ id: createId(), type: 'paragraph', text: '' });
-const suggestedCategories = ['Review', 'Thoughts', 'Essay', 'Field notes', 'Personal', 'Behind the scenes'];
+const journalCategories = ['Short film', 'Film review', 'Character / scene analysis', 'Film pitch', 'Academic essay', 'Media diary'];
+
+function youtubeEmbedUrl(value = '') {
+  try {
+    const url = new URL(value.trim());
+    const host = url.hostname.replace(/^www\./, '');
+    let videoId = '';
+    if (host === 'youtu.be') videoId = url.pathname.slice(1).split('/')[0];
+    if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
+      videoId = url.searchParams.get('v') || url.pathname.match(/^\/(?:embed|shorts)\/([^/]+)/)?.[1] || '';
+    }
+    return /^[\w-]{11}$/.test(videoId) ? `https://www.youtube-nocookie.com/embed/${videoId}` : '';
+  } catch {
+    return '';
+  }
+}
 
 function PreviewText({ text = '' }) {
   return text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g).map((part, index) => {
@@ -52,6 +92,9 @@ function PreviewBlock({ block }) {
   if (block.type === 'quote') return <blockquote><PreviewText text={block.text} /></blockquote>;
   if (block.type === 'list') return <ul>{(block.text || '').split('\n').map((item) => item.trim()).filter(Boolean).map((item, index) => <li key={index}><PreviewText text={item.replace(/^[-*]\s+/, '')} /></li>)}</ul>;
   if (block.type === 'image') return block.image ? <figure><img src={block.image} alt={block.alt || ''} /></figure> : null;
+  if (block.type === 'video') return block.url ? <figure><video controls preload="metadata" src={block.url}>Your browser does not support video playback.</video></figure> : null;
+  if (block.type === 'youtube') return youtubeEmbedUrl(block.url) ? <figure className="journal-youtube"><iframe src={youtubeEmbedUrl(block.url)} title={block.title || 'YouTube video'} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen /></figure> : null;
+  if (block.type === 'pdf') return block.url ? <figure className="journal-pdf"><iframe src={block.url} title={block.title || 'PDF document'} /><a href={block.url} target="_blank" rel="noreferrer">Open PDF in a new tab</a></figure> : null;
   return <p><PreviewText text={block.text} /></p>;
 }
 
@@ -151,7 +194,7 @@ export default function JournalAdmin() {
   const [localPostCount, setLocalPostCount] = useState(() => getLocalJournalPostCount());
   const [title, setTitle] = useState('');
   const [excerpt, setExcerpt] = useState('');
-  const [category, setCategory] = useState('Field notes');
+  const [category, setCategory] = useState('Film review');
   const [author, setAuthor] = useState('Esther Thompson');
   const [publishDate, setPublishDate] = useState(() => toDateInputValue());
   const [cover, setCover] = useState('');
@@ -181,7 +224,7 @@ export default function JournalAdmin() {
     }
   }), []);
 
-  useEffect(() => subscribeJournalPosts((nextPosts) => {
+  useEffect(() => subscribeAdminJournalPosts((nextPosts) => {
     setPosts(nextPosts);
     setLocalPostCount(getLocalJournalPostCount());
   }, (loadError) => setError(`Could not load published stories: ${loadError.message}`)), []);
@@ -222,7 +265,7 @@ export default function JournalAdmin() {
     setEditingPostId(null);
     setTitle('');
     setExcerpt('');
-    setCategory('Field notes');
+    setCategory('Film review');
     setAuthor('Esther Thompson');
     setPublishDate(toDateInputValue());
     setCover('');
@@ -261,55 +304,111 @@ export default function JournalAdmin() {
     setSavingImage(true);
     try {
       const image = await prepareImage(file);
-      onReady(image);
+      onReady(await uploadJournalAsset(image, file.name.replace(/\.[^.]+$/, '.webp'), 'image'));
     } catch (uploadError) {
-      setError(uploadError.message);
+      setError(uploadError.message || 'The image could not be uploaded.');
     } finally {
       setSavingImage(false);
     }
   };
 
-  const handlePublish = async (event) => {
-    event.preventDefault();
+  const uploadJournalFile = async (file, block, type) => {
+    const isVideo = type === 'video';
+    const maxBytes = isVideo ? 100 * 1024 * 1024 : 25 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      setError(`Choose a ${isVideo ? 'video' : 'PDF'} smaller than ${isVideo ? '100' : '25'} MB.`);
+      return;
+    }
+    if (isVideo && !['video/mp4', 'video/webm', 'video/quicktime'].includes(file.type)) {
+      setError('Choose an MP4, WebM, or QuickTime video.');
+      return;
+    }
+    if (!isVideo && file.type !== 'application/pdf') {
+      setError('Choose a PDF file.');
+      return;
+    }
+    setError('');
+    setSavingImage(true);
+    try {
+      const url = await uploadJournalAsset(file, file.name, isVideo ? 'video' : 'raw');
+      updateBlock(block.id, { url, fileName: file.name });
+    } catch (uploadError) {
+      setError(uploadError.message || `The ${isVideo ? 'video' : 'PDF'} could not be uploaded.`);
+    } finally {
+      setSavingImage(false);
+    }
+  };
+
+  const handleSave = async (status, event) => {
+    event?.preventDefault();
     setError('');
     setNotice('');
-    if (!title.trim() || !excerpt.trim() || !cover) {
-      setError('Add a title, a short preview, and a cover image before publishing.');
-      return;
-    }
-    if (!publishDate) {
-      setError('Choose the date this story was written or published.');
-      return;
-    }
-    if (!blocks.some((block) => block.type === 'image' ? block.image : block.text?.trim())) {
-      setError('Add at least one paragraph, heading, quote, or image to the story.');
-      return;
+    if (status === 'published') {
+      if (!title.trim() || !excerpt.trim() || !cover) {
+        setError('Add a title, a short preview, and a cover image before publishing.');
+        return;
+      }
+      if (!publishDate) {
+        setError('Choose the date this story was written or published.');
+        return;
+      }
+      if (!blocks.some((block) => ['image', 'video', 'pdf'].includes(block.type) ? block.type === 'image' ? block.image : block.url : block.type === 'youtube' ? youtubeEmbedUrl(block.url) : block.text?.trim())) {
+        setError('Add at least one text block, image, video, PDF, or YouTube embed to the story.');
+        return;
+      }
     }
     const existingPost = editingPostId ? posts.find((item) => item.id === editingPostId) : null;
     const date = dateInputToIso(publishDate);
-    const post = {
-      id: existingPost?.id || createId(),
-      slug: existingPost?.slug || `${slugify(title)}-${Date.now().toString(36)}`,
-      title: title.trim(),
-      excerpt: excerpt.trim(),
-      category: category.trim() || 'Field notes',
-      author: author.trim() || 'Esther Thompson',
-      cover,
-      coverName,
-      blocks: blocks.filter((block) => block.type === 'image' ? block.image : block.text?.trim()),
-      date: existingPost?.date || date,
-      ...(existingPost ? { updatedAt: date } : {}),
-    };
+    setSavingImage(true);
     try {
+      const savedCover = cover.startsWith('data:image/')
+        ? await uploadEmbeddedImage(cover, coverName || 'cover.webp')
+        : cover;
+      const savedBlocks = await Promise.all(blocks.map(async (block) => (
+        block.type === 'image' && block.image?.startsWith('data:image/')
+          ? { ...block, image: await uploadEmbeddedImage(block.image, block.fileName || 'story-image.webp') }
+          : block
+      )));
+      setCover(savedCover);
+      setBlocks(savedBlocks);
+      const post = {
+        id: existingPost?.id || createId(),
+        slug: existingPost?.status === 'draft' && status === 'published'
+          ? `${slugify(title) || 'untitled'}-${Date.now().toString(36)}`
+          : existingPost?.slug || `${slugify(title) || 'draft'}-${Date.now().toString(36)}`,
+        title: title.trim() || 'Untitled draft',
+        excerpt: excerpt.trim(),
+        category: category.trim() || 'Field notes',
+        author: author.trim() || 'Esther Thompson',
+        cover: savedCover,
+        coverName,
+        blocks: status === 'draft' ? savedBlocks : savedBlocks.filter((block) => ['image', 'video', 'pdf'].includes(block.type) ? block.type === 'image' ? block.image : block.url : block.type === 'youtube' ? youtubeEmbedUrl(block.url) : block.text?.trim()),
+        date: existingPost?.date || (publishDate ? date : new Date().toISOString()),
+        status,
+        updatedAt: new Date().toISOString(),
+      };
       setPosts(await saveJournalPost(post));
       resetEditor();
-      setNotice(existingPost
-        ? 'Changes saved to your hosted journal.'
-        : 'Published. Your story is now live in The Archive.');
-    } catch {
-      setError('The story could not be saved to Firestore. Check your connection, sign-in, and Firestore rules.');
+      setNotice(status === 'draft'
+        ? 'Draft saved. It will stay private until you publish it.'
+        : existingPost ? 'Changes saved to your hosted journal.' : 'Published. Your story is now live in The Archive.');
+    } catch (saveError) {
+      const code = String(saveError?.code || '').replace(/^firestore\//, '');
+      if (saveError?.message?.startsWith('Cloudinary')) {
+        setError(saveError.message);
+      } else if (code === 'permission-denied') {
+        setError('Firestore rejected this save. Check that the published Firestore rules allow your signed-in admin UID to write to journalPosts.');
+      } else if (code === 'unavailable' || code === 'network-request-failed') {
+        setError('Firestore could not be reached. Check your connection and try publishing again.');
+      } else {
+        setError(saveError?.message || 'The story could not be saved. Please try again.');
+      }
+    } finally {
+      setSavingImage(false);
     }
   };
+
+  const handlePublish = (event) => handleSave('published', event);
 
   const deletePost = async (id) => {
     try {
@@ -358,11 +457,11 @@ export default function JournalAdmin() {
           <section className="journal-admin__intro">
             <p className="journal-admin__eyebrow">THE WRITING DESK</p>
             <h1>Make a little<br /><em>room for a story.</em></h1>
-            <p>Write the post, add images and headings, then publish it to the cards on Film Projects.</p>
+            <p>Write your story, choose a tag, and publish it directly to the shared journal.</p>
           </section>
-          <section className="journal-admin__posts"><div className="journal-blocks-heading"><div><span className="journal-admin__eyebrow">YOUR STORIES</span><h2>Published here</h2></div><span>{posts.length} {posts.length === 1 ? 'story' : 'stories'}</span></div>
-            {localPostCount > 0 && <div className="journal-import-note"><p>{localPostCount} {localPostCount === 1 ? 'story is' : 'stories are'} still saved only in this browser.</p><button type="button" onClick={handleMigration} disabled={migrating}>{migrating ? 'Importing…' : 'Import browser stories to Firestore'}</button></div>}
-            {posts.length ? <ul>{posts.map((post) => <li key={post.id}><img src={post.cover} alt="" /><div><strong>{post.title}</strong><span>{post.category} · {new Date(post.date).toLocaleDateString()}</span></div><div className="journal-post-actions"><button type="button" onClick={() => startEditing(post)} aria-label={`Edit ${post.title}`}>Edit</button><button type="button" onClick={() => deletePost(post.id)} aria-label={`Delete ${post.title}`}>Remove</button></div></li>)}</ul> : <p>No stories yet. The first one can be yours.</p>}
+          <section className="journal-admin__posts"><div className="journal-blocks-heading"><div><span className="journal-admin__eyebrow">YOUR STORIES</span><h2>Saved here</h2></div><span>{posts.length} {posts.length === 1 ? 'story' : 'stories'}</span></div>
+            {localPostCount > 0 && <div className="journal-import-note"><p>{localPostCount} older {localPostCount === 1 ? 'story is' : 'stories are'} saved only in this browser. New posts publish straight to the shared journal.</p><button type="button" onClick={handleMigration} disabled={migrating}>{migrating ? 'Importing…' : 'Import older browser stories once'}</button></div>}
+            {posts.length ? <ul>{posts.map((post) => <li key={post.id}><img src={post.cover || ''} alt="" /><div><strong>{post.title || 'Untitled draft'}</strong><span>{post.status === 'draft' ? 'Draft' : 'Published'} · {post.category || 'Untagged'} · {new Date(post.updatedAt || post.date).toLocaleDateString()}</span></div><div className="journal-post-actions"><button type="button" onClick={() => startEditing(post)} aria-label={`Edit ${post.title || 'draft'}`}>Edit</button><button type="button" onClick={() => deletePost(post.id)} aria-label={`Delete ${post.title || 'draft'}`}>Remove</button></div></li>)}</ul> : <p>No stories yet. The first one can be yours.</p>}
           </section>
         </aside>
 
@@ -371,7 +470,7 @@ export default function JournalAdmin() {
           <label className="journal-field"><span>Story title</span><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give it a name" maxLength={100} required /></label>
           <label className="journal-field"><span>Card preview</span><textarea value={excerpt} onChange={(event) => setExcerpt(event.target.value)} placeholder="A short invitation to read the story" rows={3} maxLength={240} required /></label>
           <div className="journal-editor__split">
-          <label className="journal-field"><span>Tag</span><input list="journal-category-suggestions" value={category} onChange={(event) => setCategory(event.target.value)} placeholder="Choose or type a tag" maxLength={40} /><datalist id="journal-category-suggestions">{suggestedCategories.map((suggestion) => <option key={suggestion} value={suggestion} />)}</datalist></label>
+          <label className="journal-field"><span>Tag</span><select value={category} onChange={(event) => setCategory(event.target.value)}>{!journalCategories.includes(category) && <option value={category}>{category}</option>}{journalCategories.map((tag) => <option key={tag} value={tag}>{tag}</option>)}</select></label>
             <label className="journal-field"><span>By</span><input value={author} onChange={(event) => setAuthor(event.target.value)} maxLength={60} /></label>
           </div>
           <label className="journal-field"><span>Written or published on</span><input type="date" value={publishDate} onChange={(event) => setPublishDate(event.target.value)} required /></label>
@@ -381,15 +480,22 @@ export default function JournalAdmin() {
           <div className="journal-blocks">
             {blocks.map((block, index) => (
               <section className="journal-block" key={block.id}>
-                <div className="journal-block__bar"><span>{String(index + 1).padStart(2, '0')} · {block.type === 'paragraph' ? 'Paragraph' : block.type === 'heading' ? 'Heading' : block.type === 'quote' ? 'Pull quote' : block.type === 'list' ? 'Bulleted list' : 'Image'}</span><div><button type="button" aria-label="Move block up" disabled={index === 0} onClick={() => setBlocks((items) => { const next = [...items]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; return next; })}>↑</button><button type="button" aria-label="Move block down" disabled={index === blocks.length - 1} onClick={() => setBlocks((items) => { const next = [...items]; [next[index + 1], next[index]] = [next[index], next[index + 1]]; return next; })}>↓</button><button type="button" aria-label="Remove block" onClick={() => setBlocks((items) => items.filter((item) => item.id !== block.id))}>×</button></div></div>
-                {block.type === 'image' ? <label className="journal-block__image">{block.image ? <img src={block.image} alt={block.alt || ''} /> : <span>Choose an image for this part of the story</span>}<input type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadImage(file, (image) => updateBlock(block.id, { image })); }} /><input className="journal-block__alt" value={block.alt || ''} onChange={(event) => updateBlock(block.id, { alt: event.target.value })} placeholder="Describe the image (optional)" aria-label="Image description" /></label> : <>
+                <div className="journal-block__bar"><span>{String(index + 1).padStart(2, '0')} · {{ paragraph: 'Paragraph', heading: 'Heading', quote: 'Pull quote', list: 'Bulleted list', image: 'Image', video: 'Video upload', youtube: 'YouTube video', pdf: 'PDF document' }[block.type] || 'Paragraph'}</span><div><button type="button" aria-label="Move block up" disabled={index === 0} onClick={() => setBlocks((items) => { const next = [...items]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; return next; })}>↑</button><button type="button" aria-label="Move block down" disabled={index === blocks.length - 1} onClick={() => setBlocks((items) => { const next = [...items]; [next[index + 1], next[index]] = [next[index], next[index + 1]]; return next; })}>↓</button><button type="button" aria-label="Remove block" onClick={() => setBlocks((items) => items.filter((item) => item.id !== block.id))}>×</button></div></div>
+                {block.type === 'image' ? <label className="journal-block__image">{block.image ? <img src={block.image} alt={block.alt || ''} /> : <span>Choose an image for this part of the story</span>}<input type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadImage(file, (image) => updateBlock(block.id, { image })); }} /><input className="journal-block__alt" value={block.alt || ''} onChange={(event) => updateBlock(block.id, { alt: event.target.value })} placeholder="Describe the image (optional)" aria-label="Image description" /></label>
+                  : block.type === 'video' || block.type === 'pdf' ? <div className="journal-media-upload">
+                    <label className="journal-media-upload__pick">{block.url ? `Replace ${block.type === 'video' ? 'video' : 'PDF'}${block.fileName ? ` · ${block.fileName}` : ''}` : `Choose ${block.type === 'video' ? 'a video' : 'a PDF'}`}<input type="file" accept={block.type === 'video' ? 'video/mp4,video/webm,video/quicktime' : 'application/pdf'} onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadJournalFile(file, block, block.type); }} /></label>
+                    <span>{block.type === 'video' ? 'MP4, WebM, or QuickTime · up to 100 MB' : 'PDF · up to 25 MB'}</span>
+                    {block.url && (block.type === 'video' ? <video controls preload="metadata" src={block.url} /> : <a href={block.url} target="_blank" rel="noreferrer">Open uploaded PDF</a>)}
+                  </div>
+                  : block.type === 'youtube' ? <div className="journal-media-upload"><label className="journal-field"><span>YouTube URL</span><input type="url" value={block.url || ''} onChange={(event) => updateBlock(block.id, { url: event.target.value })} placeholder="https://www.youtube.com/watch?v=…" /></label>{youtubeEmbedUrl(block.url) && <div className="journal-youtube"><iframe src={youtubeEmbedUrl(block.url)} title="YouTube preview" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen /></div>}</div>
+                  : <>
                   <div className="journal-format-tools" aria-label="Text formatting"><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatSelection(block, '**')} aria-label="Bold"><strong>B</strong></button><button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatSelection(block, '*')} aria-label="Italic"><em>I</em></button><span>Select text and use Cmd/Ctrl+B or Cmd/Ctrl+I. Tab indents.</span></div>
                   <RichStoryEditor block={block} editorRef={activeStoryTextarea} onChange={(text, hasList) => updateBlock(block.id, { text, ...(hasList && block.type === 'paragraph' ? { type: 'list' } : {}) })} />
                 </>}
               </section>
             ))}
           </div>
-          <div className="journal-add-blocks"><span>Add to story</span>{[['paragraph', 'Paragraph'], ['heading', 'Heading'], ['quote', 'Pull quote'], ['list', 'Bulleted list'], ['image', 'Image']].map(([type, label]) => <button type="button" key={type} onClick={() => setBlocks((items) => [...items, { id: createId(), type, text: '', image: '', alt: '' }])}>＋ {label}</button>)}</div>
+          <div className="journal-add-blocks"><span>Add to story</span>{[['paragraph', 'Paragraph'], ['heading', 'Heading'], ['quote', 'Pull quote'], ['list', 'Bulleted list'], ['image', 'Image'], ['video', 'Video'], ['youtube', 'YouTube'], ['pdf', 'PDF']].map(([type, label]) => <button type="button" key={type} onClick={() => setBlocks((items) => [...items, { id: createId(), type, text: '', image: '', alt: '', url: '', fileName: '' }])}>＋ {label}</button>)}</div>
           <button className="journal-preview-toggle" type="button" onClick={() => setShowPreview((visible) => !visible)}>{showPreview ? 'Hide preview' : 'Preview post'}</button>
           {showPreview && <div className="journal-live-preview"><article className="ni-article">
             <div className="ni-article-heading">
@@ -404,7 +510,7 @@ export default function JournalAdmin() {
           {error && <p className="journal-form-message journal-form-message--error" role="alert">{error}</p>}
           {notice && <p className="journal-form-message" role="status">{notice}</p>}
           {editingPostId && <button className="journal-cancel-edit" type="button" onClick={() => { resetEditor(); setError(''); setNotice('Editing cancelled.'); }}>Cancel editing</button>}
-          <button className="journal-publish" type="submit" disabled={savingImage}>{savingImage ? 'Preparing image…' : editingPostId ? 'Save changes' : 'Publish story'}</button>
+          <div className="journal-editor__save-actions"><button className="journal-save-draft" type="button" disabled={savingImage} onClick={() => handleSave('draft')}>{savingImage ? 'Saving…' : 'Save draft'}</button><button className="journal-publish" type="submit" disabled={savingImage}>{savingImage ? 'Preparing image…' : editingPostId ? 'Save & publish' : 'Publish story'}</button></div>
         </form>
 
       </div>

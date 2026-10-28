@@ -149,7 +149,7 @@ const createGlassBurst = (event, bounds) => {
   return { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, cracks, speedLines };
 };
 
-const categories = ['All', 'Short film', 'Script / Pitch', 'Essay'];
+const categories = ['All', 'Short film', 'Film review', 'Character / scene analysis', 'Film pitch', 'Academic essay', 'Media diary'];
 
 const formatDate = (date) => {
   if (!date) return '';
@@ -253,10 +253,11 @@ const FilmProjects = () => {
     const query = searchTerm.trim().toLowerCase();
     return archiveItems.filter((item) => {
       const itemCategory = String(item.category || '').toLowerCase();
-      const categoryMatches = activeCategory === 'All' ||
+      const selectedCategory = activeCategory.toLowerCase();
+      const categoryMatches = activeCategory === 'All' || itemCategory === selectedCategory ||
         (activeCategory === 'Short film' && /short[\s-]*film/i.test(itemCategory)) ||
-        (activeCategory === 'Script / Pitch' && /script|pitch/i.test(itemCategory)) ||
-        (activeCategory === 'Essay' && /essay/i.test(itemCategory));
+        (activeCategory === 'Film pitch' && /film\s*pitch|script\s*\/?\s*pitch/i.test(itemCategory)) ||
+        (activeCategory === 'Academic essay' && /academic\s*essay|essay/i.test(itemCategory));
       const textMatches =
         !query ||
         [item.title, item.category, item.excerpt, item.description]
@@ -272,7 +273,7 @@ const FilmProjects = () => {
   return (
     <main className="film-projects-bg">
       <button className="film-back-home" onClick={() => navigate('/')} aria-label="Back to home">
-        <span className="home-button-symbol" aria-hidden="true">◎</span>
+        <span className="home-button-symbol" aria-hidden="true">◎︎</span>
         <span className="home-button-label">RETURN TO HOME</span>
         <span className="home-button-arrow" aria-hidden="true">↖</span>
       </button>
@@ -281,7 +282,7 @@ const FilmProjects = () => {
         <div className="hero-art">
           <div className="hero-orbit hero-orbit-one" aria-hidden="true" />
           <div className="hero-orbit hero-orbit-two" aria-hidden="true" />
-          <div className="hero-sigil" aria-hidden="true">✳</div>
+          <div className="hero-sigil" aria-hidden="true">✳︎</div>
           <div className="hero-scanline" aria-hidden="true" />
           <div className="hero-portrait-frame">
             <motion.button
@@ -360,7 +361,7 @@ const FilmProjects = () => {
           <p className="archive-eyebrow">FILM / WRITING / LIFE / EXPERIMENTS</p>
           <h1 id="archive-title">nonsense<span>&amp;</span><br />ingredients</h1>
           <p className="archive-hero-description">
-            Art is an archive.<br />Work in progress. Always.
+            Art is an archive.<span className="archive-description-star" aria-hidden="true"> ✳︎</span><br />Work in progress. Always.
           </p>
           <p className="archive-handwritten">same girl.<br />new stories.</p>
         </div>
@@ -409,11 +410,11 @@ const FilmProjects = () => {
                 <button className="film-project-card-action" type="button" onClick={() => handleCardClick(item)} disabled={!item.link} aria-label={`${item.action || 'More coming soon'}: ${item.title}`}>
                   <span className="film-project-image-wrap">
                     <img src={item.image} alt="" loading="lazy" decoding="async" className={`film-project-img${item.title.startsWith('Itọñ') ? ' iton-img' : ''}${item.title === 'Auditioning for Love' ? ' audition-img' : ''}`} />
-                    <span className="film-image-index">N&amp;I / {String(idx + 1).padStart(2, '0')}</span><span className="film-image-cross" aria-hidden="true">✳</span>
+                    <span className="film-image-index">N&amp;I / {String(idx + 1).padStart(2, '0')}</span><span className="film-image-cross" aria-hidden="true">✳︎</span>
                   </span>
                   <span className="film-project-copy">
                     <span className="film-project-meta"><span>{item.category}</span><span>{item.link ? '↗ OPEN PROJECT' : 'IN PROGRESS'}</span></span>
-                    <span className="film-project-title">{item.title}<span className="title-star"> ✳</span></span>
+                    <span className="film-project-title">{item.title}<span className="title-star"> ✳︎</span></span>
                     <span className="film-project-desc">{item.description}</span>
                     <span className="film-project-read">{item.action || 'More soon'} <span aria-hidden="true">→</span></span>
                   </span>
@@ -422,12 +423,12 @@ const FilmProjects = () => {
             ) : (
               <Link className={`film-journal-card journal-card-size-${idx % 5}`} to={`/film-projects/${item.slug}`} key={item.id}>
                 <div className="film-journal-card-image-wrap">
-                  {item.cover ? <img src={item.cover} alt="" loading="lazy" decoding="async" /> : <div className="journal-cover-type" aria-hidden="true"><span>N&amp;I / FILE {String(idx + 1).padStart(2, '0')}</span><strong>{item.title}</strong><i>✳</i></div>}
+                  {item.cover ? <img src={item.cover} alt="" loading="lazy" decoding="async" /> : <div className="journal-cover-type" aria-hidden="true"><span>N&amp;I / FILE {String(idx + 1).padStart(2, '0')}</span><strong>{item.title}</strong><i>✳︎</i></div>}
                   <span className="film-journal-card-arrow" aria-hidden="true">↗</span>
                 </div>
                 <div className="film-journal-card-copy">
                   <div className="film-journal-card-meta"><span>{item.category || 'UNCATEGORIZED'}</span><span>{formatDate(item.date)}</span></div>
-                  <h3>{item.title}<span className="title-star"> ✳</span></h3>
+                  <h3>{item.title}<span className="title-star"> ✳︎</span></h3>
                   <p>{item.excerpt}</p>
                   <span className="film-journal-read">Read the story <span aria-hidden="true">→</span></span>
                 </div>
@@ -450,7 +451,7 @@ const FilmProjects = () => {
         <div className="footer-wave" aria-hidden="true">✳ ▏▎▍▅▃▆▂▅▇▃▅▂▆▃▅▇▂▃▅▆▂▅▃▇▂▆▅▃</div>
         <div className="footer-bottom">
           <p>same girl.<br />new stories.</p>
-          <span className="footer-symbol" aria-hidden="true">◎</span>
+          <span className="footer-symbol" aria-hidden="true">◎︎</span>
           <p className="footer-credit">FILM / WRITING<br />NONSENSE&amp;INGREDIENTS © 2026</p>
         </div>
       </footer>
