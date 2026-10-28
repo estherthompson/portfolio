@@ -39,7 +39,7 @@ const Contact = () => {
 
   return (
     <div className="contact-main-flex">
-      <img src={starImg} alt="star" className="contact-star-img" />
+      <img src={starImg} alt="" aria-hidden="true" className="contact-star-img" />
       <div className="contact-left">
         <img src={profileImg} alt="Esther Thompson" className="contact-profile-img" />
       </div>

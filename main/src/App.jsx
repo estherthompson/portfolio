@@ -3,12 +3,14 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 
 // Import components
 import Layout from './components/Layout';
-import Home from './components/Home';
+import LandingPage from './components/LandingPage';
 import About from './components/About';
 import Portfolio from './components/PortfolioPage';
 import Contact from './components/Contact';
-import FilmProjects from './components/FilmProjects';
 import CodingProjects from './components/CodingProjects';
+import FilmProjects from './components/FilmProjects';
+import NonsenseIngredients from './components/NonsenseIngredients';
+import JournalAdmin from './components/JournalAdmin';
 
 // Three.js experiment — code-split so three/drei stay out of the main bundle.
 const TechJarTestEnvironment = lazy(() =>
@@ -38,12 +40,14 @@ function App() {
       <BodyClassController />
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
+          <Route index element={<LandingPage />} />
           <Route path="about" element={<About />} />
           <Route path="portfolio" element={<Portfolio />} />
           <Route path="contact" element={<Contact />} />
         </Route>
         <Route path="film-projects" element={<FilmProjects />} />
+        <Route path="film-projects/:slug" element={<NonsenseIngredients />} />
+        <Route path="admin" element={<JournalAdmin />} />
         <Route path="coding-projects" element={<CodingProjects />} />
         <Route
           path="tech-jar-test"

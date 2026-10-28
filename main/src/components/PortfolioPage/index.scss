@@ -55,6 +55,25 @@
   position: relative;
 }
 
+.portfolio-scroll-container--embedded {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+  min-height: calc(100dvh - 92px);
+  max-height: none;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.portfolio-scroll-container--embedded .portfolio-buttons-container {
+  box-sizing: border-box;
+  width: min(1200px, 100%);
+  margin-top: 0;
+  padding: clamp(2rem, 5vh, 4rem) 1.5rem;
+}
+
 .portfolio-section {
   min-height: 120vh;
   width: 100vw;

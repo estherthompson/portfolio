@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import './index.scss';
 import ProfileImage from '../../assets/images/profile.webp';
-import Image_8 from '../../assets/images/8.webp';
 import Image_9 from '../../assets/images/9.webp';
 import MusicNav from '../MusicNav';
 
@@ -30,8 +29,6 @@ const Home = () => {
         const positionDecorations = () => {
             const portraitRight = portrait.offsetLeft + portraitImage.offsetWidth;
             const positions = {
-                '--star-left': `${intro.offsetLeft}px`,
-                '--star-top': `${intro.offsetTop + intro.offsetHeight * 0.92}px`,
                 '--saturn-left': `${portraitRight}px`,
                 '--saturn-top': `${portrait.offsetTop}px`,
                 '--saturn-space': `${Math.max(0, hero.clientWidth - portraitRight - 10) / 0.76}px`,
@@ -67,9 +64,6 @@ const Home = () => {
                     ? { '--hero-card-height': `${minimizedPortraitHeight}px` }
                     : undefined}
             >
-                <div className="star-container" aria-hidden="true">
-                    <img src={Image_8} alt="" />
-                </div>
                 <div className="image-9-container" aria-hidden="true">
                     <img src={Image_9} alt="" />
                 </div>
@@ -120,7 +114,7 @@ const Home = () => {
                             <span className="hero-btn__arrow" aria-hidden="true">&#8594;</span>
                         </button>
 
-                        <Link to="/portfolio" className="hero-btn hero-btn--outline">
+                        <Link to="/#portfolio" className="hero-btn hero-btn--outline">
                             <span className="hero-btn__text">View My Work</span>
                             <span className="hero-btn__arrow" aria-hidden="true">&#8594;</span>
                         </Link>

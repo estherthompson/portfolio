@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './index.scss';
 import timelineImg from '../../assets/images/timeline.webp';
 import homeAiLandingImg from '../../assets/images/home_ai_landing.webp';
@@ -260,9 +260,23 @@ const projects = [
   },
 ];
 
+const slugifyProject = (value) => value.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+export { projects as codingProjects };
+
 const CodingProjects = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [expandedProject, setExpandedProject] = useState(null);
+
+  useEffect(() => {
+    const projectSlug = location.hash.replace(/^#project-/, '');
+    const projectIndex = projects.findIndex((project) => slugifyProject(project.title) === projectSlug);
+    if (projectIndex < 0) return;
+    setExpandedProject(projectIndex);
+    requestAnimationFrame(() => {
+      document.getElementById(`project-${projectSlug}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [location.hash]);
 
   const toggleExpanded = (index) => {
     setExpandedProject(expandedProject === index ? null : index);
@@ -284,7 +298,7 @@ const CodingProjects = () => {
           <TechJar projectCount={projects.length} />
         </section>
         {projects.map((project, idx) => (
-          <section className="coding-project-section" key={project.title}>
+          <section className="coding-project-section" id={`project-${slugifyProject(project.title)}`} key={project.title}>
             <div className="project-image-container">
               <img src={project.image} alt={project.title} className="coding-project-img" loading="lazy" decoding="async" />
 

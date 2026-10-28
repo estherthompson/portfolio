@@ -1,0 +1,66 @@
+.landing-page {
+  width: 100%;
+}
+
+.landing-section {
+  min-height: calc(100dvh - 92px);
+  scroll-margin-top: 92px;
+}
+
+.landing-section--home {
+  display: flex;
+  align-items: stretch;
+  background: #f1e7d7;
+}
+
+.landing-section--about {
+  background: #a38554;
+}
+
+.landing-section--about .about-page {
+  min-height: calc(100dvh - 92px);
+  padding-top: clamp(2rem, 5vh, 4rem);
+}
+
+.landing-section--portfolio {
+  background: #e3d3b3;
+}
+
+.landing-section--contact {
+  background: #f8f5ef;
+}
+
+.landing-section--contact .contact-main-flex {
+  min-height: calc(100dvh - 92px);
+}
+
+.landing-section__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  .landing-section {
+    min-height: calc(100dvh - 72px);
+    scroll-margin-top: 72px;
+  }
+
+  .landing-section--about .about-page {
+    min-height: calc(100dvh - 72px);
+  }
+
+  .landing-section--contact .contact-main-flex {
+    min-height: calc(100dvh - 72px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-page { scroll-behavior: auto; }
+}

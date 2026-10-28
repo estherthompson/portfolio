@@ -435,29 +435,6 @@
 /* ============================================================
    Decorative images anchored to the hero's card edges
    ============================================================ */
-.star-container {
-  position: absolute;
-  top: var(--star-top);
-  left: var(--star-left);
-  width: clamp(240px, 24vw, 340px);
-  aspect-ratio: 1366/768;
-  // Account for the transparent canvas: about 40% of the main star is outside.
-  transform: translate(-44%, -50%);
-  pointer-events: none;
-  overflow: visible;
-  z-index: 22;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
-}
-
-.star-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
-  transition: transform 0.3s ease;
-}
-
 .image-9-container {
   position: absolute;
   top: var(--saturn-top);
@@ -527,7 +504,6 @@
     aspect-ratio: 3/4;
   }
 
-  .star-container,
   .image-9-container {
     display: none;
   }
@@ -589,7 +565,6 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-card,
   .image-container,
-  .star-container,
   .image-9-container {
     animation: none !important;
     opacity: 1 !important;

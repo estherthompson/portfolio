@@ -118,6 +118,8 @@ body {
 }
 
 .contact-main-flex {
+  position: relative;
+  isolation: isolate;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -129,6 +131,8 @@ body {
 }
 
 .contact-left {
+  position: relative;
+  z-index: 1;
   flex: 0 0 370px;
   display: flex;
   align-items: flex-start;
@@ -146,6 +150,8 @@ body {
 }
 
 .contact-right {
+  position: relative;
+  z-index: 1;
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
@@ -318,7 +324,7 @@ body {
   right: -30rem;
   width: 600px;
   height: auto;
-  z-index: 10;
+  z-index: 0;
   pointer-events: none;
   user-select: none;
   opacity: 0.92;

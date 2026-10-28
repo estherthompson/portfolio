@@ -3,10 +3,10 @@ import codingImg from '../../assets/images/coding.webp';
 import filmImg from '../../assets/images/film.webp';
 import { useNavigate } from 'react-router-dom';
 
-const Portfolio = () => {
+const Portfolio = ({ embedded = false }) => {
   const navigate = useNavigate();
   return (
-    <div className="portfolio-scroll-container">
+    <div className={`portfolio-scroll-container${embedded ? ' portfolio-scroll-container--embedded' : ''}`}>
       <div className="portfolio-buttons-container">
         <div className="portfolio-button-group">
           <div className="portfolio-button-title">Coding Projects</div>
