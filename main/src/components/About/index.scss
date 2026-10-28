@@ -6,7 +6,7 @@
   background: #a38554; // gold/brown shade
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   padding: 140px 40px 40px 40px;
   box-sizing: border-box;
@@ -17,6 +17,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: stretch;
 }
 
 .about-bg-image {
@@ -74,10 +75,12 @@
 
 .about-card {
   background: #e3d3b3; // lighter tan
+  box-sizing: border-box;
+  border: 1px solid rgba(145, 113, 60, .45);
   border-radius: 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-  padding: 32px 40px 40px 40px;
-  max-width: 700px;
+  box-shadow: 0 10px 28px rgba(66, 48, 22, .1);
+  padding: clamp(1.4rem, 2.5vw, 2.25rem);
+  max-width: none;
   min-width: 350px;
   width: 100%;
   position: relative;
@@ -111,23 +114,51 @@
 }
 
 .about-content-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  max-width: 1180px;
+  margin: 0 auto;
   width: 100%;
 }
 
+@media (max-width: 1100px) {
+  .about-page {
+    align-items: flex-start;
+  }
+
+  .about-content-wrapper {
+    grid-template-columns: 1fr;
+    max-width: 700px;
+  }
+}
+
 .about-hobbies-section {
-  margin-top: 36px;
+  box-sizing: border-box;
+  margin-top: 0;
   background: #e3d3b3;
-  border-radius: 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-  padding: 28px 36px 32px 36px;
-  max-width: 700px;
+  border: 1px solid rgba(145, 113, 60, .45);
+  border-radius: 24px;
+  box-shadow: 0 10px 28px rgba(66, 48, 22, .1);
+  padding: clamp(1.4rem, 2.5vw, 2.25rem);
+  max-width: none;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+.about-hobbies-section .carousel-container {
+  box-sizing: border-box;
+  width: 100%;
+  padding: .5rem 0 0;
+  margin-bottom: 0;
+}
+
+.about-hobbies-section .slider {
+  height: clamp(220px, 27vw, 340px);
+  border-radius: 14px;
 }
 
 .hobbies-title {
@@ -182,7 +213,8 @@
 
 .about-profile-img-rect {
   width: 220px;
-  height: 100%;
+  height: 400px;
+  flex: 0 0 220px;
   max-width: 100%;
   min-width: 90px;
   max-height: 400px;
@@ -191,10 +223,11 @@
   border-radius: 18px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.10);
   background: #fff;
+  margin-top: 0;
   margin-left: 12px;
   margin-right: 0;
   display: block;
-  align-self: stretch;
+  align-self: center;
 }
 
 // Responsive styles
@@ -260,6 +293,8 @@
   }
   .about-content-wrapper {
     margin-top: 0;
+    grid-template-columns: 1fr;
+    max-width: 700px;
   }
   .about-page {
     padding-top: 100px;
@@ -271,6 +306,7 @@
   }
   .about-profile-img-rect {
     width: 160px;
+    flex-basis: 160px;
     max-width: 80vw;
     min-width: 80px;
     max-height: 150px;
@@ -358,6 +394,7 @@
   }
   .about-profile-img-rect {
     width: 100px;
+    flex-basis: auto;
     max-width: 60vw;
     min-width: 60px;
     max-height: 90px;
@@ -375,5 +412,17 @@
 @media (max-width: 900px) and (min-width: 601px) {
   .about-profile-img-rect {
     margin-top: 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  .about-hobbies-section .slider {
+    height: clamp(180px, 38vw, 300px);
+  }
+}
+
+@media (max-width: 600px) {
+  .about-hobbies-section .slider {
+    height: clamp(140px, 48vw, 210px);
   }
 }
