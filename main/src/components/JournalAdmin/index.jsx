@@ -37,6 +37,23 @@ function prepareImage(file) {
 }
 
 const initialBlock = () => ({ id: createId(), type: 'paragraph', text: '' });
+const suggestedCategories = ['Review', 'Thoughts', 'Essay', 'Field notes', 'Personal', 'Behind the scenes'];
+
+function PreviewText({ text = '' }) {
+  return text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g).map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) return <strong key={index}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith('*') && part.endsWith('*')) return <em key={index}>{part.slice(1, -1)}</em>;
+    return part;
+  });
+}
+
+function PreviewBlock({ block }) {
+  if (block.type === 'heading') return <h3><PreviewText text={block.text} /></h3>;
+  if (block.type === 'quote') return <blockquote><PreviewText text={block.text} /></blockquote>;
+  if (block.type === 'list') return <ul>{(block.text || '').split('\n').map((item) => item.trim()).filter(Boolean).map((item, index) => <li key={index}><PreviewText text={item.replace(/^[-*]\s+/, '')} /></li>)}</ul>;
+  if (block.type === 'image') return block.image ? <figure><img src={block.image} alt={block.alt || ''} /></figure> : null;
+  return <p><PreviewText text={block.text} /></p>;
+}
 
 function htmlToStoryText(html) {
   const documentNode = new DOMParser().parseFromString(html, 'text/html');
@@ -93,6 +110,7 @@ export default function JournalAdmin() {
   const [savingImage, setSavingImage] = useState(false);
   const [editingPostId, setEditingPostId] = useState(null);
   const activeStoryTextarea = useRef(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => onAuthStateChanged(auth, async (currentUser) => {
     setUser(currentUser);
@@ -332,7 +350,7 @@ export default function JournalAdmin() {
           <label className="journal-field"><span>Story title</span><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give it a name" maxLength={100} required /></label>
           <label className="journal-field"><span>Card preview</span><textarea value={excerpt} onChange={(event) => setExcerpt(event.target.value)} placeholder="A short invitation to read the story" rows={3} maxLength={240} required /></label>
           <div className="journal-editor__split">
-            <label className="journal-field"><span>Section</span><input value={category} onChange={(event) => setCategory(event.target.value)} placeholder="Field notes" maxLength={40} /></label>
+          <label className="journal-field"><span>Tag</span><input list="journal-category-suggestions" value={category} onChange={(event) => setCategory(event.target.value)} placeholder="Choose or type a tag" maxLength={40} /><datalist id="journal-category-suggestions">{suggestedCategories.map((suggestion) => <option key={suggestion} value={suggestion} />)}</datalist></label>
             <label className="journal-field"><span>By</span><input value={author} onChange={(event) => setAuthor(event.target.value)} maxLength={60} /></label>
           </div>
           <label className="journal-field"><span>Written or published on</span><input type="date" value={publishDate} onChange={(event) => setPublishDate(event.target.value)} required /></label>
@@ -351,6 +369,15 @@ export default function JournalAdmin() {
             ))}
           </div>
           <div className="journal-add-blocks"><span>Add to story</span>{[['paragraph', 'Paragraph'], ['heading', 'Heading'], ['quote', 'Pull quote'], ['list', 'Bulleted list'], ['image', 'Image']].map(([type, label]) => <button type="button" key={type} onClick={() => setBlocks((items) => [...items, { id: createId(), type, text: '', image: '', alt: '' }])}>＋ {label}</button>)}</div>
+          <button className="journal-preview-toggle" type="button" onClick={() => setShowPreview((visible) => !visible)}>{showPreview ? 'Hide preview' : 'Preview post'}</button>
+          {showPreview && <article className="journal-live-preview">
+            {cover && <img className="journal-live-preview__cover" src={cover} alt="" />}
+            <span className="journal-admin__eyebrow">{category || 'UNTAGGED'} · {publishDate || 'NO DATE'}</span>
+            <h2>{title || 'Your story title'}</h2>
+            {excerpt && <p className="journal-live-preview__excerpt">{excerpt}</p>}
+            <p className="journal-live-preview__byline">By {author || 'Esther Thompson'}</p>
+            <div className="journal-live-preview__body">{blocks.map((block) => <PreviewBlock key={block.id} block={block} />)}</div>
+          </article>}
           {error && <p className="journal-form-message journal-form-message--error" role="alert">{error}</p>}
           {notice && <p className="journal-form-message" role="status">{notice}</p>}
           {editingPostId && <button className="journal-cancel-edit" type="button" onClick={() => { resetEditor(); setError(''); setNotice('Editing cancelled.'); }}>Cancel editing</button>}
