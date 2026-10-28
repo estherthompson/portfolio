@@ -491,7 +491,7 @@ export default function JournalAdmin() {
         <form className="journal-editor" onSubmit={handlePublish}>
           <div className="journal-editor__form-head"><div><span className="journal-admin__eyebrow">{editingPostId ? 'EDITING STORY' : 'NEW STORY'}</span><h2>{editingPostId ? 'Update the details' : 'Start with the details'}</h2></div><span className="journal-editor__draft-dot">● Draft</span></div>
           <label className="journal-field"><span>Story title</span><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give it a name" maxLength={100} required /></label>
-          <label className="journal-field"><span>Card preview</span><textarea value={excerpt} onChange={(event) => setExcerpt(event.target.value)} placeholder="A short invitation to read the story" rows={3} maxLength={240} required /></label>
+          <label className="journal-field"><span>Card preview</span><textarea value={excerpt} onChange={(event) => setExcerpt(event.target.value)} placeholder="Write a preview for the story" rows={4} required /></label>
           <div className="journal-editor__split">
           <label className="journal-field"><span>Tag</span><select value={category} onChange={(event) => setCategory(event.target.value)}>{!journalCategories.includes(category) && <option value={category}>{category}</option>}{journalCategories.map((tag) => <option key={tag} value={tag}>{tag}</option>)}</select></label>
             <label className="journal-field"><span>By</span><input value={author} onChange={(event) => setAuthor(event.target.value)} maxLength={60} /></label>
