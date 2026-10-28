@@ -17,12 +17,20 @@ Open `/admin` on the same site origin and in the same browser where the posts we
 
 Stories remain cached in the browser for faster display, but Firestore is the shared copy used across devices and by visitors. Images, videos, and PDFs are stored in Cloudinary and only their URLs are saved in Firestore, keeping posts small. The editor accepts source images up to 15 MB, videos up to 100 MB, and PDFs up to 25 MB.
 
-## Cloudinary media uploads
+## Signed Cloudinary media uploads
 
-The admin uploads media directly to Cloudinary with an unsigned upload preset. In Cloudinary Console, copy the product environment's cloud name and create an unsigned preset restricted to the image, video, and PDF formats and file sizes used by the editor. Unsigned presets are public in the client bundle, so keep their allowed formats and size limits narrow.
+The journal editor requests a short-lived signed upload from `netlify/functions/cloudinary-signature.mjs`. The function checks the Firebase ID token against Firebase Authentication and only signs uploads for the journal admin UID above. The Cloudinary API secret stays in the Netlify Function environment and is never sent to the browser.
 
-For local development, copy `.env.example` to `.env.local`. The configured cloud name is `mn3mn8zk` and the unsigned upload preset is `portfolio_assets`. For Netlify, add `VITE_CLOUDINARY_CLOUD_NAME=mn3mn8zk` and `VITE_CLOUDINARY_UPLOAD_PRESET=portfolio_assets` under the site's environment variables and trigger a new deploy. Never put the Cloudinary API secret in the frontend.
+In Netlify, add these environment variables with the **Functions** scope, then deploy again:
+
+- `CLOUDINARY_CLOUD_NAME` — Cloudinary product environment cloud name.
+- `CLOUDINARY_API_KEY` — Cloudinary API key. This is returned to the browser for the signed upload.
+- `CLOUDINARY_API_SECRET` — Cloudinary API secret. Mark this variable as containing a secret; never add it to `VITE_*` variables or the repository.
+- `FIREBASE_WEB_API_KEY` — Firebase web API key from `src/lib/firebase.js`, used by the function to validate the ID token.
+- `JOURNAL_ADMIN_UID` — the Firebase UID listed above.
+
+For local development with Netlify Dev, copy `.env.example` to `.env.local` and fill these values there. Do not commit `.env.local`. After confirming signed uploads work, disable or delete the old unsigned Cloudinary preset.
 
 ## Netlify
 
-No service-account key or Netlify secret is required for this web-SDK setup. After deploying the site, use the same `/admin` sign-in. Firestore rules protect writes independently of the page UI.
+No Firebase service-account key is required. After deploying the site and configuring the Function variables above, use the same `/admin` sign-in. Firestore rules protect writes independently of the page UI.

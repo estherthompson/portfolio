@@ -37,21 +37,44 @@ function prepareImage(file) {
 }
 
 async function uploadJournalAsset(file, fileName, resourceType) {
-  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME?.trim() || 'mn3mn8zk';
-  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET?.trim() || 'portfolio_assets';
-  if (!cloudName || !uploadPreset) {
-    throw new Error('Cloudinary is not configured. Check the cloud name and unsigned upload preset.');
+  const extension = fileName.split('.').pop()?.toLowerCase() || '';
+  const allowedExtensions = {
+    image: ['webp'],
+    video: ['mp4', 'webm', 'mov'],
+    raw: ['pdf'],
+  };
+  if (!allowedExtensions[resourceType]?.includes(extension)) {
+    throw new Error('This file type is not supported for upload.');
   }
+  const currentUser = auth.currentUser;
+  if (!currentUser) throw new Error('Sign in as the journal admin before uploading.');
+
+  const signatureResponse = await fetch('/.netlify/functions/cloudinary-signature', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${await currentUser.getIdToken()}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ resourceType, extension }),
+  });
+  const signatureResult = await signatureResponse.json().catch(() => ({}));
+  if (!signatureResponse.ok) {
+    throw new Error(signatureResult.error || 'The secure upload could not be authorized.');
+  }
+
+  const { cloudName, apiKey, signature, parameters } = signatureResult;
   const formData = new FormData();
   formData.append('file', file, fileName);
-  formData.append('upload_preset', uploadPreset);
+  formData.append('api_key', apiKey);
+  formData.append('signature', signature);
+  Object.entries(parameters).forEach(([key, value]) => formData.append(key, String(value)));
   const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/${resourceType}/upload`, {
     method: 'POST',
     body: formData,
   });
   const result = await response.json();
   if (!response.ok || !result.secure_url) {
-    throw new Error(result.error?.message || 'Cloudinary could not upload this file. Check the cloud name, preset, and allowed formats.');
+    throw new Error(result.error?.message || 'Cloudinary could not upload this file. Check the signed upload configuration.');
   }
   return result.secure_url;
 }
