@@ -4,8 +4,6 @@ import { motion, useReducedMotion } from 'framer-motion';
 import './index.scss';
 import ItọñImg from '../../assets/images/Itọñ.webp';
 import FamilarPaths from '../../assets/images/familar_paths.webp';
-import AuditioningForLove from '../../assets/images/auditioning_for_love.webp';
-import FilmProjectPlaceholder from '../../assets/images/film.webp';
 import EyesPhoto from '../../assets/images/eyes_photo.jpeg';
 import { subscribeJournalPosts } from '../../lib/journalStore';
 
@@ -29,20 +27,6 @@ const projects = [
       'An Afrofuturist experimental sci-fi short where ancestral memory defies digital control. In a world run by the Unified Optimization Authority, Hadassah—a young Ibibio woman—awakens to her heritage, challenging algorithmic conformity and sparking an ancestral awakening.',
     link: 'https://docs.google.com/document/d/10u4ll58XQv5pvIQ_1pmTOXfvxK1jQk_6aj1e9nh59aE/edit?usp=sharing',
     action: 'Read pitch',
-  },
-  {
-    title: 'Auditioning for Love',
-    category: 'Short film',
-    date: 'IN DEVELOPMENT',
-    image: AuditioningForLove,
-    description: 'A new story in progress. More soon.',
-  },
-  {
-    title: 'What You Do Next',
-    category: 'Short film',
-    date: 'IN DEVELOPMENT',
-    image: FilmProjectPlaceholder,
-    description: 'An idea taking shape. More soon.',
   },
 ];
 
@@ -409,7 +393,7 @@ const FilmProjects = () => {
               <article id={`project-${slugifyProject(item.title)}`} className={`film-project-card film-project-card-size-${idx % 4}${idx === 0 ? ' film-project-card-featured' : ''}`} key={item.id}>
                 <button className="film-project-card-action" type="button" onClick={() => handleCardClick(item)} disabled={!item.link} aria-label={`${item.action || 'More coming soon'}: ${item.title}`}>
                   <span className="film-project-image-wrap">
-                    <img src={item.image} alt="" loading="lazy" decoding="async" className={`film-project-img${item.title.startsWith('Itọñ') ? ' iton-img' : ''}${item.title === 'Auditioning for Love' ? ' audition-img' : ''}`} />
+                    <img src={item.image} alt="" loading="lazy" decoding="async" className={`film-project-img${item.title.startsWith('Itọñ') ? ' iton-img' : ''}`} />
                     <span className="film-image-index">N&amp;I / {String(idx + 1).padStart(2, '0')}</span><span className="film-image-cross" aria-hidden="true">✳︎</span>
                   </span>
                   <span className="film-project-copy">
