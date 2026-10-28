@@ -152,6 +152,7 @@ const FilmProjects = () => {
   const [journalPosts, setJournalPosts] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const searchInputRef = useRef(null);
   const [glassCracks, setGlassCracks] = useState([]);
   const [glassFragments, setGlassFragments] = useState([]);
   const [comicBurst, setComicBurst] = useState(null);
@@ -269,11 +270,21 @@ const FilmProjects = () => {
 
   return (
     <main className="film-projects-bg">
-      <button className="film-back-home" onClick={() => navigate('/')} aria-label="Back to home">
-        <span className="home-button-symbol" aria-hidden="true">◎︎</span>
-        <span className="home-button-label">RETURN TO HOME</span>
-        <span className="home-button-arrow" aria-hidden="true">↖</span>
-      </button>
+      <nav className="archive-nav" aria-label="Main navigation">
+        <button className="film-back-home" onClick={() => navigate('/')} aria-label="Back to home">
+          <span className="home-button-symbol" aria-hidden="true">◎︎</span>
+          <span className="home-button-label">RETURN TO HOME</span>
+          <span className="home-button-arrow" aria-hidden="true">↖</span>
+        </button>
+        <div className="archive-nav-links">
+          <button type="button" onClick={() => {
+            document.getElementById('archive')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            window.setTimeout(() => searchInputRef.current?.focus(), 350);
+          }}>Search Articles <span aria-hidden="true">⌕</span></button>
+          <button type="button" onClick={() => navigate('/#about')}>About Me <span aria-hidden="true">↗</span></button>
+          <button type="button" onClick={() => navigate('/#contact')}>Contact <span aria-hidden="true">↗</span></button>
+        </div>
+      </nav>
 
       <section className="archive-hero" id="archive-top" aria-labelledby="archive-title">
         <div className="hero-art">
@@ -360,7 +371,7 @@ const FilmProjects = () => {
           <p className="archive-hero-description">
             Art is an archive.<span className="archive-description-star" aria-hidden="true"> ✳︎</span><br />Work in progress. Always.
           </p>
-          <p className="archive-handwritten">same girl.<br />new stories.</p>
+          <p className="archive-handwritten">film<br />& fragments</p>
         </div>
         <div className="hero-side-label">N&amp;I — PERSONAL ARCHIVE — VOL. 01</div>
         <a className="archive-scroll-cue" href="#archive">Scroll to the archive <span aria-hidden="true">↓</span></a>
@@ -368,28 +379,11 @@ const FilmProjects = () => {
 
       <section className="archive-projects film-journal" id="archive" aria-labelledby="archive-title">
         <div className="archive-section-heading film-journal-heading">
-          <div className="archive-heading-copy">
-            <h2 id="archive-title">
-              The Archive
-              <svg
-                className="red-star"
-                viewBox="0 0 100 100"
-                aria-hidden="true"
-              >
-                <path
-                  d="M50 0 L61 35 L96 15 L75 43 L100 50 L75 57 L96 85 L61 65 L50 100 L39 65 L4 85 L25 57 L0 50 L25 43 L4 15 L39 35 Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </h2>
-
+          <div>
+            <h2 id="archive-title">The Archive<span className="red-star"> ✳</span></h2>
             <p>Film projects and notes from the archive, collected together.</p>
           </div>
-
-          <span className="journal-volume">
-            PERSONAL FILES<br />
-            N&amp;I — 001—∞
-          </span>
+          <span className="journal-volume">PERSONAL FILES<br />N&amp;I — 001—∞</span>
         </div>
 
         <div className="journal-toolbar" aria-label="Filter the archive">
@@ -408,6 +402,7 @@ const FilmProjects = () => {
           <label className="journal-search">
             <span className="sr-only">Search posts</span>
             <input
+              ref={searchInputRef}
               type="search"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
