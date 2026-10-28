@@ -64,7 +64,6 @@
 .film-back-home:hover { color: var(--archive-red); border-color: var(--archive-red); transform: translateX(-2px); }
 .film-back-home:focus-visible { outline: 2px solid var(--archive-blue); outline-offset: 3px; }
 
-
 /* Archive navigation */
 .archive-nav {
   position: absolute;
@@ -119,6 +118,7 @@
   .archive-nav-links button { flex: 1; justify-content: center; padding: .5rem .3rem; font-size: .58rem; }
   .archive-hero { padding-top: 5rem; }
 }
+
 
 .archive-hero {
   position: relative;
@@ -1588,7 +1588,7 @@
 }
 
 
-/* Mobile fixes: compact buttons, larger type, and a centred Archive heading. */
+/* Consolidated responsive overrides: compact square navbar and reliable article cards. */
 @media (max-width: 760px) {
   .archive-nav {
     top: 1.5rem;
@@ -1612,10 +1612,7 @@
   }
 
   .archive-nav .home-button-symbol { font-size: .8rem; }
-  .archive-nav .home-button-label {
-    font-size: .62rem;
-    letter-spacing: .05em;
-  }
+  .archive-nav .home-button-label { font-size: .62rem; letter-spacing: .05em; }
   .archive-nav .home-button-arrow { font-size: .75rem; }
 
   .archive-nav-links {
@@ -1642,38 +1639,12 @@
   }
 
   .archive-hero { padding-top: 4.3rem; }
-
-  /* Centre the Archive heading and description within the full section. */
   .archive-section-heading,
-  .film-journal-heading {
-    display: block;
-    text-align: center;
-  }
-
-  .archive-section-heading > div,
-  .film-journal-heading > div {
-    width: 100%;
-    max-width: none;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
+  .film-journal-heading { text-align: left; }
   .archive-section-heading h2,
-  .film-journal-heading h2 {
-    text-align: center;
-  }
-
+  .film-journal-heading h2,
   .archive-section-heading p,
-  .film-journal-heading p {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
-
-  .archive-section-heading .journal-volume,
-  .film-journal-heading .journal-volume {
-    display: none;
-  }
+  .film-journal-heading p { text-align: left; }
 }
 
 @media (max-width: 380px) {
@@ -1681,19 +1652,14 @@
   .archive-nav .film-back-home { padding: .38rem .35rem; gap: .25rem; }
   .archive-nav .home-button-label { font-size: .55rem; }
   .archive-nav-links button { font-size: .5rem; padding-inline: .08rem; }
-}
-/* Fix archive cards on small phones */
-@media (max-width: 380px) {
+
   .archive-masonry-grid {
-    display: grid !important;
     grid-template-columns: 1fr !important;
     grid-auto-flow: row !important;
     grid-auto-rows: auto !important;
-    align-items: start !important;
     height: auto !important;
     overflow: visible !important;
   }
-
   .archive-masonry-grid > .archive-masonry-project,
   .archive-masonry-grid > .archive-masonry-post {
     display: flex !important;
@@ -1705,9 +1671,41 @@
     visibility: visible !important;
     opacity: 1 !important;
   }
-
   .archive-masonry-grid > .archive-card-familiar,
-  .archive-masonry-grid > .archive-card-iton {
-    grid-column: 1 / -1 !important;
+  .archive-masonry-grid > .archive-card-iton { grid-column: 1 / -1 !important; }
+}
+/* Larger, more readable navbar on laptops and desktop */
+@media (min-width: 761px) {
+  .archive-nav {
+    left: 2rem;
+    right: 2rem;
+  }
+
+  .archive-nav .film-back-home {
+    padding: 1rem 1.25rem;
+    min-height: 3.5rem;
+  }
+
+  .archive-nav .home-button-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.16em;
+  }
+
+  .archive-nav .home-button-symbol {
+    font-size: 1rem;
+  }
+
+  .archive-nav .home-button-arrow {
+    font-size: 1rem;
+  }
+
+  .archive-nav-links {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .archive-nav-links button {
+    padding: 0.85rem 1.1rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
   }
 }
