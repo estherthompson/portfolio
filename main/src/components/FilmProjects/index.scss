@@ -235,7 +235,11 @@
   color: var(--archive-ivory);
 }
 .archive-section-heading p, .film-journal-heading p { margin: 0 0 .25rem; max-width: 25rem; color: var(--archive-muted); font-size: .95rem; line-height: 1.6; }
-.red-star, .title-star { color: var(--archive-red); }
+.red-star {
+  color: #e50914;
+  font-family: Georgia, serif;
+  font-variant-emoji: text;
+}
 .film-projects-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.35rem; width: 100%; margin: 0; }
 .film-project-card { min-width: 0; overflow: hidden; border: 1px solid rgba(242,232,208,.16); border-radius: 3px; background: rgba(8,8,8,.8); transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease; }
 .film-project-card-featured { grid-column: span 2; }
@@ -1707,5 +1711,29 @@
     padding: 0.85rem 1.1rem;
     font-size: 0.85rem;
     letter-spacing: 0.04em;
+  }
+}
+/* Restore left alignment of the Archive on mobile */
+@media (max-width: 600px) {
+  .archive-section-heading,
+  .film-journal-heading {
+    text-align: left !important;
+    justify-content: flex-start !important;
+  }
+
+  .archive-section-heading > div,
+  .film-journal-heading > div {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    text-align: left !important;
+  }
+
+  .archive-section-heading h2,
+  .film-journal-heading h2,
+  .archive-section-heading p,
+  .film-journal-heading p {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }

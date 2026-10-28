@@ -380,7 +380,7 @@ const FilmProjects = () => {
       <section className="archive-projects film-journal" id="archive" aria-labelledby="archive-title">
         <div className="archive-section-heading film-journal-heading">
           <div>
-            <h2 id="archive-title">The Archive<span className="red-star"> ✳</span></h2>
+            <h2 id="archive-title">The Archive<span className="red-star"> ✳︎</span></h2>
             <p>Film projects and notes from the archive, collected together.</p>
           </div>
           <span className="journal-volume">PERSONAL FILES<br />N&amp;I — 001—∞</span>
