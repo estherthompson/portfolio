@@ -11,7 +11,7 @@ const projects = [
   {
     title: 'Familiar Paths',
     category: 'Short film',
-    date: 'FILM / SHORT',
+    publishedAt: '2025-05-30',
     image: FamilarPaths,
     description:
       'A poetic short film about the choices we make and the trails we follow. Are our paths predetermined, shaped by others—like the trails of ants—or are they truly our own? “Familiar Paths” invites you to reflect on authenticity, agency, and the journey toward self-discovery. This was shot, filmed, and edited in a day.',
@@ -21,7 +21,7 @@ const projects = [
   {
     title: 'Itọñ — Film Pitch',
     category: 'Script / Pitch',
-    date: 'WRITING / SCI-FI',
+    publishedAt: '2025-04-01',
     image: ItọñImg,
     description:
       'An Afrofuturist experimental sci-fi short where ancestral memory defies digital control. In a world run by the Unified Optimization Authority, Hadassah—a young Ibibio woman—awakens to her heritage, challenging algorithmic conformity and sparking an ancestral awakening.',
@@ -242,19 +242,25 @@ const FilmProjects = () => {
       ...journalPosts.map((post) => ({ ...post, kind: 'post' })),
     ];
     const query = searchTerm.trim().toLowerCase();
-    return archiveItems.filter((item) => {
-      const itemCategory = String(item.category || '').toLowerCase();
-      const selectedCategory = activeCategory.toLowerCase();
-      const categoryMatches = activeCategory === 'All' || itemCategory === selectedCategory ||
-        (activeCategory === 'Short film' && /short[\s-]*film/i.test(itemCategory)) ||
-        (activeCategory === 'Film pitch' && /film\s*pitch|script\s*\/?\s*pitch/i.test(itemCategory)) ||
-        (activeCategory === 'Academic essay' && /academic\s*essay|essay/i.test(itemCategory));
-      const textMatches =
-        !query ||
-        [item.title, item.category, item.excerpt, item.description]
-          .some((value) => String(value || '').toLowerCase().includes(query));
-      return categoryMatches && textMatches;
-    });
+    return archiveItems
+      .filter((item) => {
+        const itemCategory = String(item.category || '').toLowerCase();
+        const selectedCategory = activeCategory.toLowerCase();
+        const categoryMatches = activeCategory === 'All' || itemCategory === selectedCategory ||
+          (activeCategory === 'Short film' && /short[\s-]*film/i.test(itemCategory)) ||
+          (activeCategory === 'Film pitch' && /film\s*pitch|script\s*\/?\s*pitch/i.test(itemCategory)) ||
+          (activeCategory === 'Academic essay' && /academic\s*essay|essay/i.test(itemCategory));
+        const textMatches =
+          !query ||
+          [item.title, item.category, item.excerpt, item.description]
+            .some((value) => String(value || '').toLowerCase().includes(query));
+        return categoryMatches && textMatches;
+      })
+      .sort((a, b) => {
+        const dateA = new Date(a.kind === 'project' ? a.publishedAt : a.date || 0).getTime();
+        const dateB = new Date(b.kind === 'project' ? b.publishedAt : b.date || 0).getTime();
+        return (Number.isFinite(dateB) ? dateB : 0) - (Number.isFinite(dateA) ? dateA : 0);
+      });
   }, [journalPosts, activeCategory, searchTerm]);
 
   const handleCardClick = (project) => {
@@ -395,16 +401,16 @@ const FilmProjects = () => {
         </div>
 
         {filteredArchiveItems.length ? (
-          <div className="film-projects-grid film-journal-grid">
+          <div className="archive-masonry-grid">
             {filteredArchiveItems.map((item, idx) => item.kind === 'project' ? (
-              <article id={`project-${slugifyProject(item.title)}`} className={`film-project-card film-project-card-size-${idx % 4}${idx === 0 ? ' film-project-card-featured' : ''}`} key={item.id}>
+              <article id={`project-${slugifyProject(item.title)}`} className={`film-project-card archive-masonry-project${item.title === 'Familiar Paths' ? ' archive-card-familiar' : item.title.startsWith('Itọñ') ? ' archive-card-iton' : ''}`} key={item.id}>
                 <button className="film-project-card-action" type="button" onClick={() => handleCardClick(item)} disabled={!item.link} aria-label={`${item.action || 'More coming soon'}: ${item.title}`}>
                   <span className="film-project-image-wrap">
                     <img src={item.image} alt="" loading="lazy" decoding="async" className={`film-project-img${item.title.startsWith('Itọñ') ? ' iton-img' : ''}`} />
                     <span className="film-image-index">N&amp;I / {String(idx + 1).padStart(2, '0')}</span><span className="film-image-cross" aria-hidden="true">✳︎</span>
                   </span>
                   <span className="film-project-copy">
-                    <span className="film-project-meta"><span>{item.category}</span><span>{item.link ? '↗ OPEN PROJECT' : 'IN PROGRESS'}</span></span>
+                    <span className="film-project-meta"><span>{item.category}</span><span>{formatDate(item.publishedAt)}</span></span>
                     <span className="film-project-title">{item.title}<span className="title-star"> ✳︎</span></span>
                     <span className="film-project-desc">{item.description}</span>
                     <span className="film-project-read">{item.action || 'More soon'} <span aria-hidden="true">→</span></span>
@@ -412,7 +418,7 @@ const FilmProjects = () => {
                 </button>
               </article>
             ) : (
-              <Link className={`film-journal-card journal-card-size-${idx % 5}`} to={`/film-projects/${item.slug}`} key={item.id}>
+              <Link className="film-journal-card archive-masonry-post" to={`/film-projects/${item.slug}`} key={item.id}>
                 <div className="film-journal-card-image-wrap">
                   {item.cover ? <img src={item.cover} alt="" loading="lazy" decoding="async" /> : <div className="journal-cover-type" aria-hidden="true"><span>N&amp;I / FILE {String(idx + 1).padStart(2, '0')}</span><strong>{item.title}</strong><i>✳︎</i></div>}
                   <span className="film-journal-card-arrow" aria-hidden="true">↗</span>
