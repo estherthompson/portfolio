@@ -215,8 +215,15 @@ const FilmProjects = () => {
   };
 
   useLayoutEffect(() => {
+    // React Router keeps the previous scroll position on client-side navigation.
+    // Reset both possible scrolling surfaces when entering the archive page.
+    if (!location.hash) {
+      window.scrollTo(0, 0);
+      document.querySelector('.film-projects-bg')?.scrollTo(0, 0);
+      return;
+    }
+
     const targetId = location.hash.slice(1);
-    if (!targetId) return;
     if (targetId.startsWith('project-')) {
       window.scrollTo(0, 0);
       return;
